@@ -41,14 +41,26 @@ double** alloc_plate(int height, int width)
 	return plate;
 }
 
+/*
+	Izracuna novo toploto na tocki (x, y) plosce 'first' iz podatkov plosce 'second'.
+	Funkcija predpostavlja, da x in y ne morata iti izven okvirov tabel 'first' in 'second' (=> to preglej v glavni funkciji).
+*/
+void calc_heat_point(double** first, double** second, int x, int y)
+{
+	first[y][x] = (second[y - 1][x] + second[y + 1][x] + second[y][x - 1] + second[y][x + 1]) / 4;
+}
+
 double **calc_heat_plate(int height, int width)
 {
+	/*
+		first_plate... plosca, za katero bomo v tej iteraciji racunali nove vrednosti
+		second_plate... plosca, iz katere bomo vzemali vrednosti za izracun novih vrednosti plosce 'first_plate'
+	*/
 	double **first_plate = alloc_plate(height, width);
 	double **second_plate = alloc_plate(height, width);
 
-	double **curr_plate = first;
-
-	curr_plate = init_plate(curr_plate, height, width);
+	first_plate = init_plate(first_plate, height, width);
+	second_plate = init_plate(second_plate, height, width);
 
 	// TODO: free memory from first_plate and second_plate
 	return NULL;
