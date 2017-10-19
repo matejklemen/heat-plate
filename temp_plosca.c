@@ -1,5 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+#define EPSILON (double) 0.00001
+
+// koliko iteracij rabimo, da stvar 'skonvergira'
+int no_iterations = 0;
 
 void print_plate(double **plate, int height, int width)
 {
@@ -32,22 +38,38 @@ double **init_plate(double **plate, int height, int width)
 
 }
 
-double** alloc_plate(int height, int width)
+double **alloc_plate(int height, int width)
 {
-	double** plate = (double **) malloc(sizeof(double*) * height);
+	double **plate = (double **) malloc(sizeof(double *) * height);
 	for(int i = 0; i < width; i++)
-		plate[i] = (double*) malloc(sizeof(double) * width);
+		plate[i] = (double *) malloc(sizeof(double) * width);
 
 	return plate;
+}
+
+void free_plate(double **plate, int height, int width)
+{
+	for(int i = 0; i < height; i++)
+		free(plate[i]);
+
+	free(plate);
 }
 
 /*
 	Izracuna novo toploto na tocki (x, y) plosce 'first' iz podatkov plosce 'second'.
 	Funkcija predpostavlja, da x in y ne morata iti izven okvirov tabel 'first' in 'second' (=> to preglej v glavni funkciji).
+	Vrne novo temperaturo.
 */
-void calc_heat_point(double** first, double** second, int x, int y)
+double calc_heat_point(double **second, int x, int y)
 {
-	first[y][x] = (second[y - 1][x] + second[y + 1][x] + second[y][x - 1] + second[y][x + 1]) / 4;
+	return (second[y - 1][x] + second[y + 1][x] + second[y][x - 1] + second[y][x + 1]) / 4;
+}
+
+void swap_pointers(double ***first, double ***second)
+{
+	double **tmp = *first;
+	*first = *second;
+	*second = tmp;
 }
 
 double **calc_heat_plate(int height, int width)
@@ -60,10 +82,36 @@ double **calc_heat_plate(int height, int width)
 	double **second_plate = alloc_plate(height, width);
 
 	first_plate = init_plate(first_plate, height, width);
-	second_plate = init_plate(second_plate, height, width);
+	second_plate = init_plate(second_plate, height, width);	
 
-	// TODO: free memory from first_plate and second_plate
-	return NULL;
+	while(1) {
+		double diff = 0.0;
+
+		// v vsaki (razen v robnih) tocki izracunaj novo temperaturo na podlagi starih
+		for(int i = 1; i < height - 1; i++) {
+			for(int j = 1; j < width - 1; j++) {
+				first_plate[i][j] = calc_heat_point(second_plate, j, i);
+
+				double curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
+
+				if(curr_diff > diff)
+					diff = curr_diff;
+			}
+		}
+		no_iterations++;
+
+		if(diff < EPSILON)
+			break;
+
+		swap_pointers(&first_plate, &second_plate);
+	}
+
+	// ne rabimo vec druge plosce
+	free_plate(second_plate, height, width);
+
+	printf("Skonvergiralo v %d korakih.\n", no_iterations);
+
+	return first_plate;
 }
 
 int main(int argc, char *argv[])
@@ -75,7 +123,11 @@ int main(int argc, char *argv[])
 
 		width += 2; height += 2;
 
-		calc_heat_plate(height, width);
+		double **solution_plate = calc_heat_plate(height, width);
+		
+		// TODO: visualize plate
+
+		free_plate(solution_plate, height, width);
 	}
 	else
 		printf("Usage: \"%s <height> <width>\"\n", argv[0]);
