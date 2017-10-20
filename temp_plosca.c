@@ -41,7 +41,7 @@ double **init_plate(double **plate, int height, int width)
 double **alloc_plate(int height, int width)
 {
 	double **plate = (double **) malloc(sizeof(double *) * height);
-	for(int i = 0; i < width; i++)
+	for(int i = 0; i < height; i++)
 		plate[i] = (double *) malloc(sizeof(double) * width);
 
 	return plate;
