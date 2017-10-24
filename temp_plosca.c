@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "izris.c"
 
-#define EPSILON (double) 0.00001
+#define EPSILON (double) 1
 
 // koliko iteracij rabimo, da stvar 'skonvergira'
 int no_iterations = 0;
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
 
 		double **solution_plate = calc_heat_plate(height, width);
 		
-		// TODO: visualize plate
+		init_draw_plate(solution_plate, height, width);
 
 		free_plate(solution_plate, height, width);
 	}
