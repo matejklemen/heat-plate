@@ -1,6 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <gtk/gtk.h>
+#include <cairo/cairo.h>
+#include <math.h>
 
 #define MAX_WIDTH 800
 #define MAX_HEIGHT 800
@@ -10,71 +9,83 @@
 		(conversion_rate_height x conversion_rate_width) polj tabele za prikaz barve na enem px 
 */
 
-int window_width, window_height, conversion_rate_height, conversion_rate_width;
+int window_width, window_height;
+double **heatplate;
 
-void draw_plate(cairo_t *cr)
+/*
+	Src: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
+	Na naslove kazalcev zapise vrednosti med 0 in 1 (idealno, ker ima cairo tudi RGB predstavljen z vrednostmi od 0 do 1)
+*/
+void heat_to_color(double normalized_value, float *rval, float *gval, float *bval)
 {
-	cairo_set_source_rgb(cr, 100, 0, 0);
-	cairo_set_line_width(cr, 10);
+	const int NUM_COLORS = 4;
+	static float color[4][3] = { {0,0,1}, {0,1,0}, {1,1,0}, {1,0,0} };
+	int idx1, idx2;
+	float fract_between = 0;
 
-	// cairo_move_to(cr, 500, 100); // starting point
-	// cairo_line_to (cr, 500, 110);
+	if(normalized_value <= 0) {
+		idx1 = idx2 = 0;
+	}
+	else if(normalized_value >= 1) {
+		idx1 = idx2 = NUM_COLORS-1;
+	}
+	else {
+		normalized_value = normalized_value * (NUM_COLORS - 1);
+		idx1  = floor(normalized_value);
+		idx2  = idx1 + 1;
+		fract_between = normalized_value - (float)idx1;
+	}
+
+	*rval   = (color[idx2][0] - color[idx1][0]) * fract_between + color[idx1][0];
+	*gval = (color[idx2][1] - color[idx1][1]) * fract_between + color[idx1][1];
+	*bval  = (color[idx2][2] - color[idx1][2]) * fract_between + color[idx1][2];
+}
+
+void draw_to_file(int height, int width, char *file_name)
+{
+	cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+
+	cairo_t *cr = cairo_create(surface);
+	cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
+	cairo_set_line_width(cr, 2);
+
+	float r, g, b;
+
+	// risemo px po px
+	for (int y = 0; y < height; y += 1) {
+		for (int x = 0; x < width; x += 1) {
+			double normalized_heat = heatplate[y][x] / 100.0;
+			heat_to_color(normalized_heat, &r, &g, &b);
+			
+			cairo_set_source_rgb(cr, r, g, b);
+			cairo_move_to(cr, x, y);
+			cairo_close_path(cr);
+			cairo_stroke(cr);
+		}
+	}
 
 	cairo_stroke(cr);
+	// shranimo narisano v datoteko
+	cairo_surface_write_to_png(surface, file_name);
+	
+	cairo_destroy(cr);
+	cairo_surface_destroy(surface);
 }
 
-gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
-{
-	draw_plate(cr);
-
-	return FALSE;
-}
-
-void init_draw_plate(double** plate, int height, int width)
+void init_draw_plate(double **plate, int height, int width)
 {
 	// zagotovimo, da ne program slucajno risal npr. 1M x 1M slike
-	if(height > MAX_HEIGHT) {
-		window_height = MAX_HEIGHT;
-		// TODO: kam zaokrozimo?
-		conversion_rate_height = (height / MAX_HEIGHT);
-	}
-	else {
-		window_height = height;
-		conversion_rate_height = 1;
-	}
+	// TODO: logika za zmanjsanje ogromne plosce na dimenzije < (MAX_WIDTH x MAX_HEIGHT)
+	if(height > MAX_HEIGHT || width > MAX_WIDTH)
+		return;
 
-	
-	if(width > MAX_WIDTH) {
-		window_width = MAX_WIDTH;
-		// TODO: kam zaokrozimo?
-		conversion_rate_width = (width / MAX_WIDTH);
-	}
-	else {
-		window_width = width;
-		conversion_rate_width = 1;
-	}
+	window_width = width;
+	window_height = height;
+	heatplate = plate;
 
-	gtk_init(0, NULL);
-
-	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);;
-	GtkWidget *darea = gtk_drawing_area_new();
-
-	gtk_container_add(GTK_CONTAINER(window), darea);
-
-	// ob 'draw' eventu se vse skupaj ponovno narise
-	g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
-	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-	gtk_window_set_default_size(GTK_WINDOW(window), window_width, window_height); 
-	gtk_window_set_title(GTK_WINDOW(window), "Izris temperaturne plosce");
-
-	gtk_widget_show_all(window);
-
-	gtk_main();
-
+	draw_to_file(height, width, "plosca.png");
 }
 
 // https://www.cairographics.org/manual/cairo-cairo-t.html
 // Compilanje celotnega programa (Linux)
-// gcc temp_plosca.c -o temp_plosca `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`
+// gcc temp_plosca.c -o temp_plosca `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -lm
