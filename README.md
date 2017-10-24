@@ -2,7 +2,7 @@
 Project in a Distributed systems course.
 
 ## Compiling
-gcc temp_plosca.c -o temp_plosca `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -lm \[Linux\]
+\[Linux\]```gcc temp_plosca.c -o temp_plosca \`pkg-config --cflags gtk+-3.0\` \`pkg-config --libs gtk+-3.0\` -lm```
 
 ## Libs
 [Cairo](https://www.cairographics.org/) for visualization.
