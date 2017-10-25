@@ -16,23 +16,23 @@ IplImage *get_image(double **plate, int h, int w)
 			if(plate[i][j] < 33)
 			{
 				int val = (int) round((plate[i][j] - 0) / 33 * 255);
-				img->imageData[i*img->widthStep + j*3 + 0] = 255;	   // blue
-				img->imageData[i*img->widthStep + j*3 + 1] = val;	   // green
-				img->imageData[i*img->widthStep + j*3 + 2] = 0;		 // red
+				img->imageData[i*img->widthStep + j*3 + 0] = 255;       // blue
+				img->imageData[i*img->widthStep + j*3 + 1] = val;       // green
+				img->imageData[i*img->widthStep + j*3 + 2] = 0;         // red
 			}
 			else if(plate[i][j] < 66)
 			{
 				int val = (int) round((plate[i][j] - 33) / 33 * 255);
 				img->imageData[i*img->widthStep + j*3 + 0] = 255 - val; // blue
-				img->imageData[i*img->widthStep + j*3 + 1] = 255;	   // green
-				img->imageData[i*img->widthStep + j*3 + 2] = val;	   // red
+				img->imageData[i*img->widthStep + j*3 + 1] = 255;       // green
+				img->imageData[i*img->widthStep + j*3 + 2] = val;       // red
 			}
 			else
 			{
 				int val = (int) round((plate[i][j] - 66) / 34 * 255);
-				img->imageData[i*img->widthStep + j*3 + 0] = 0;		 // blue
+				img->imageData[i*img->widthStep + j*3 + 0] = 0;         // blue
 				img->imageData[i*img->widthStep + j*3 + 1] = 255 - val; // green
-				img->imageData[i*img->widthStep + j*3 + 2] = 255;	   // red
+				img->imageData[i*img->widthStep + j*3 + 2] = 255;       // red
 			}
 		}
 	}
