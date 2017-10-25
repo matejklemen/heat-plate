@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
 		
 		IplImage *img = get_image(solution_plate, height, width);
 		show_image(img);
-		cvReleaseImage(&img);
+		save_image(img, "img.png");
+		release_image(img);
 		
 		free_plate(solution_plate, height, width);
 	}

@@ -2,11 +2,14 @@
 #include <highgui.h>
 #include <math.h>
 
+#define MAX_SIZE 1000
+
 IplImage *get_image(double **plate, int h, int w)
 {
-    IplImage *img = cvCreateImage(cvSize(w, h), IPL_DEPTH_8U, 3);
+    IplImage *img = cvCreateImage(cvSize(w, h), 8, 3);
     
-	for(int i=0; i<h; i++)
+    // prepisi in pretvori vrednosti iz plosce v sliko
+    for(int i=0; i<h; i++)
     {
         for(int j=0; j<w; j++)
         {
@@ -34,6 +37,28 @@ IplImage *get_image(double **plate, int h, int w)
         }
     }
     
+    // ce najvecja od dimenzij presega MAX_SIZE, potem pomanjsaj sliko
+    int size;
+    if(h > w)
+    {
+        size = h;
+    }
+    else
+    {
+        size = w;
+    }
+    
+    if(size > MAX_SIZE)
+    {
+        double k = (double) MAX_SIZE / size;
+        int new_h = (int) round(k * img->height);
+        int new_w = (int) round(k * img->width);
+        IplImage *resized_img = cvCreateImage(cvSize(new_w, new_h), 8, 3);
+        cvResize(img, resized_img);
+        cvReleaseImage(&img);
+        img = resized_img;
+    }
+    
     return img;
 }
 
@@ -47,6 +72,11 @@ void show_image(IplImage *img)
 
 void save_image(IplImage *img, const char *file_name)
 {
-    // to-do
+    cvSaveImage(file_name, img);
+}
+
+void release_image(IplImage *img)
+{
+    cvReleaseImage(&img);
 }
 
