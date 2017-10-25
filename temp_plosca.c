@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "izris.c"
+//#include "izris.c"
+#include "visualization_opencv.h"
 
 #define EPSILON (double) 1
 
@@ -126,8 +127,12 @@ int main(int argc, char *argv[])
 
 		double **solution_plate = calc_heat_plate(height, width);
 		
-		init_draw_plate(solution_plate, height, width);
-
+		//init_draw_plate(solution_plate, height, width);
+		
+		IplImage *img = get_image(solution_plate, height, width);
+		show_image(img);
+		cvReleaseImage(&img);
+		
 		free_plate(solution_plate, height, width);
 	}
 	else
