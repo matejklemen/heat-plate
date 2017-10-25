@@ -1,5 +1,5 @@
-#ifndef VISUALIZATION_OPENCV_H
-#define VISUALIZATION_OPENCV_H
+#ifndef VISUALIZATION_H
+#define VISUALIZATION_H
 
 #include <cv.h>
 
