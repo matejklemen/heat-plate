@@ -4,6 +4,38 @@
 
 #define MAX_SIZE 1000
 
+/*
+	Src: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
+	Na naslove kazalcev zapise vrednosti med 0 in 1 (idealno, ker ima cairo tudi RGB predstavljen z vrednostmi od 0 do 1)
+*/
+static void heat_to_color(double normalized_value, float *rval, float *gval, float *bval)
+{
+	const int NUM_COLORS = 6;
+	static float color[6][3] = { {0,0,1}, {0,1,1}, {0,1,0}, {1,1,0}, {1,0.5,0}, {1,0,0} };
+	int idx1, idx2;
+	float fract_between = 0;
+	
+	if(normalized_value <= 0)
+	{
+		idx1 = idx2 = 0;
+	}
+	else if(normalized_value >= 1)
+	{
+		idx1 = idx2 = NUM_COLORS-1;
+	}
+	else
+	{
+		normalized_value = normalized_value * (NUM_COLORS - 1);
+		idx1  = floor(normalized_value);
+		idx2  = idx1 + 1;
+		fract_between = normalized_value - (float)idx1;
+	}
+	
+	*rval   = (color[idx2][0] - color[idx1][0]) * fract_between + color[idx1][0];
+	*gval = (color[idx2][1] - color[idx1][1]) * fract_between + color[idx1][1];
+	*bval  = (color[idx2][2] - color[idx1][2]) * fract_between + color[idx1][2];
+}
+
 IplImage *get_image(double **plate, int h, int w)
 {
 	IplImage *img = cvCreateImage(cvSize(w, h), 8, 3);
@@ -13,27 +45,12 @@ IplImage *get_image(double **plate, int h, int w)
 	{
 		for(int j=0; j<w; j++)
 		{
-			if(plate[i][j] < 33)
-			{
-				int val = (int) round((plate[i][j] - 0) / 33 * 255);
-				img->imageData[i*img->widthStep + j*3 + 0] = 255;       // blue
-				img->imageData[i*img->widthStep + j*3 + 1] = val;       // green
-				img->imageData[i*img->widthStep + j*3 + 2] = 0;         // red
-			}
-			else if(plate[i][j] < 66)
-			{
-				int val = (int) round((plate[i][j] - 33) / 33 * 255);
-				img->imageData[i*img->widthStep + j*3 + 0] = 255 - val; // blue
-				img->imageData[i*img->widthStep + j*3 + 1] = 255;       // green
-				img->imageData[i*img->widthStep + j*3 + 2] = val;       // red
-			}
-			else
-			{
-				int val = (int) round((plate[i][j] - 66) / 34 * 255);
-				img->imageData[i*img->widthStep + j*3 + 0] = 0;         // blue
-				img->imageData[i*img->widthStep + j*3 + 1] = 255 - val; // green
-				img->imageData[i*img->widthStep + j*3 + 2] = 255;       // red
-			}
+			float r, g, b;
+			heat_to_color(plate[i][j] / 100, &r, &g, &b);
+			
+			img->imageData[i*img->widthStep + j*3 + 0] = b * 255;
+			img->imageData[i*img->widthStep + j*3 + 1] = g * 255;
+			img->imageData[i*img->widthStep + j*3 + 2] = r * 255;
 		}
 	}
 	
@@ -65,6 +82,9 @@ IplImage *get_image(double **plate, int h, int w)
 void show_image(IplImage *img)
 {
 	cvNamedWindow("Preview", CV_WINDOW_NORMAL);
+	cvMoveWindow("Preview", 100, 100);
+	cvResizeWindow("Preview", 500, 500);
+	
 	cvShowImage("Preview", img);
 	
 	cvWaitKey(0);
