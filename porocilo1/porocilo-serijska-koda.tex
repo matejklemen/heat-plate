@@ -1,0 +1,55 @@
+% To je predloga za poročila o domačih nalogah pri predmetih, katerih
+% nosilec je Blaž Zupan. Seveda lahko tudi dodaš kakšen nov, zanimiv
+% in uporaben element, ki ga v tej predlogi (še) ni. Več o LaTeX-u izveš na
+% spletu, na primer na http://tobi.oetiker.ch/lshort/lshort.pdf.
+%
+% To predlogo lahko spremeniš v PDF dokument s pomočjo programa
+% pdflatex, ki je del standardne instalacije LaTeX programov.
+
+\documentclass[a4paper,11pt]{article}
+\usepackage{a4wide}
+\usepackage{fullpage}
+\usepackage[utf8x]{inputenc}
+\usepackage[slovene]{babel}
+\selectlanguage{slovene}
+\usepackage[toc,page]{appendix}
+\usepackage[pdftex]{graphicx} % za slike
+\usepackage{setspace}
+\usepackage{color}
+\definecolor{light-gray}{gray}{0.95}
+\usepackage{listings} % za vključevanje kode
+\usepackage{hyperref}
+\renewcommand{\baselinestretch}{1.2} % za boljšo berljivost večji razmak
+\renewcommand{\appendixpagename}{Priloge}
+
+\lstset{ % nastavitve za izpis kode, sem lahko tudi kaj dodaš/spremeniš
+language=Python,
+basicstyle=\footnotesize,
+basicstyle=\ttfamily\footnotesize\setstretch{1},
+backgroundcolor=\color{light-gray},
+}
+
+\title{Temperaturna plošča: serijski algoritem}
+\author{Rok Grmek, Matej Klemen}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Opis problema (in motivacija?)}
+
+
+\section{Opis uporabljene metode}
+\subsection{Algoritem}
+
+\subsection{Uporabljene knjižnice}
+
+\section{Rezultati}
+
+\section{Razprava}
+Tuki pokomentirava mal teoretično vs praktično časovno zahtevnost. Pa napiševa še, če bi se dalo kej še izboljšat mogoče? Lahko tut ta del združiva z rezultati.
+
+
+\section{Literatura? (verjetno ne)}
+\end{document}
