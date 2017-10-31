@@ -57,7 +57,7 @@ static void swap_pointers(double ***first, double ***second)
 	*second = tmp;
 }
 
-double **calc_heat_plate(int height, int width, double eps)
+double **calc_heat_plate(int height, int width, int iterations)
 {
 	/*
 		first_plate... plosca, za katero bomo v tej iteraciji racunali nove vrednosti
@@ -69,37 +69,33 @@ double **calc_heat_plate(int height, int width, double eps)
 	init_plate(first_plate, height, width);
 	init_plate(second_plate, height, width);	
 	
-	int no_iterations = 0;
+	double max_diff;
 	
-	while(1)
+	for(int i = 0; i < iterations; i++)
 	{
-		double diff = 0.0;
-
+		max_diff = 0.0;
+		
 		// v vsaki (razen v robnih) tocki izracunaj novo temperaturo na podlagi starih
-		for(int i = 1; i < height - 1; i++)
+		for(int j = 1; j < height - 1; j++)
 		{
-			for(int j = 1; j < width - 1; j++)
+			for(int k = 1; k < width - 1; k++)
 			{
-				first_plate[i][j] = calc_heat_point(second_plate, i, j);
+				first_plate[j][k] = calc_heat_point(second_plate, j, k);
 
-				double curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
+				double curr_diff = fabs(first_plate[j][k] - second_plate[j][k]);
 
-				if(curr_diff > diff)
-					diff = curr_diff;
+				if(curr_diff > max_diff)
+					max_diff = curr_diff;
 			}
 		}
-		no_iterations++;
-
-		if(diff < eps)
-			break;
-
+		
 		swap_pointers(&first_plate, &second_plate);
 	}
 	
 	// ne rabimo vec druge plosce
 	free_plate(second_plate, height, width);
 	
-	printf("%d iterations (eps = %.4lf)\n", no_iterations, eps);
+	printf("Maximum heat difference calculated in the last iteration was %.6lf.\n", max_diff);
 	
 	return first_plate;
 }

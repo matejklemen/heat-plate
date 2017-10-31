@@ -2,11 +2,11 @@
 #include <highgui.h>
 #include <math.h>
 
-#define MAX_SIZE 1000
+#define MAX_SIZE 800
 
 /*
 	Src: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
-	Na naslove kazalcev zapise vrednosti med 0 in 1 (idealno, ker ima cairo tudi RGB predstavljen z vrednostmi od 0 do 1)
+	Na naslove kazalcev zapise vrednosti med 0 in 1
 */
 static void heat_to_color(double normalized_value, float *rval, float *gval, float *bval)
 {
@@ -26,14 +26,14 @@ static void heat_to_color(double normalized_value, float *rval, float *gval, flo
 	else
 	{
 		normalized_value = normalized_value * (NUM_COLORS - 1);
-		idx1  = floor(normalized_value);
-		idx2  = idx1 + 1;
+		idx1 = floor(normalized_value);
+		idx2 = idx1 + 1;
 		fract_between = normalized_value - (float)idx1;
 	}
 	
-	*rval   = (color[idx2][0] - color[idx1][0]) * fract_between + color[idx1][0];
+	*rval = (color[idx2][0] - color[idx1][0]) * fract_between + color[idx1][0];
 	*gval = (color[idx2][1] - color[idx1][1]) * fract_between + color[idx1][1];
-	*bval  = (color[idx2][2] - color[idx1][2]) * fract_between + color[idx1][2];
+	*bval = (color[idx2][2] - color[idx1][2]) * fract_between + color[idx1][2];
 }
 
 IplImage *get_image(double **plate, int h, int w)
@@ -41,9 +41,9 @@ IplImage *get_image(double **plate, int h, int w)
 	IplImage *img = cvCreateImage(cvSize(w, h), 8, 3);
 	
 	// prepisi in pretvori vrednosti iz plosce v sliko
-	for(int i=0; i<h; i++)
+	for(int i = 0; i < h; i++)
 	{
-		for(int j=0; j<w; j++)
+		for(int j = 0; j < w; j++)
 		{
 			float r, g, b;
 			heat_to_color(plate[i][j] / 100, &r, &g, &b);
