@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 		show_image(img);
 		
 		char file_name[64];
-		sprintf(file_name, "heat_plate_%s_%s_%s.png", argv[1], argv[2], argv[3]);
+		sprintf(file_name, "img/heat_plate_%s_%s_%s.png", argv[1], argv[2], argv[3]);
 		save_image(img, file_name);
 		
 		release_image(img);

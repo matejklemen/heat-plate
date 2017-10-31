@@ -104,14 +104,3 @@ double **calc_heat_plate(int height, int width, int iterations)
 	return first_plate;
 }
 
-void print_plate(double **plate, int height, int width)
-{
-	for(int i = 0; i < height; i++)
-	{
-		for(int j = 0; j < width; j++)
-			printf("[%.2lf] ", plate[i][j]);
-			
-		printf("\n");
-	}
-}
-

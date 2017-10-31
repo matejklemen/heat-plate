@@ -3,7 +3,6 @@
 
 void free_plate(double **plate, int height, int width);
 double **calc_heat_plate(int height, int width, int iterations);
-void print_plate(double **plate, int height, int width);
 
 #endif
 
