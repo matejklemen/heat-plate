@@ -1,4 +1,5 @@
 #include "heat_plate.h"
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -95,7 +96,10 @@ double **calc_heat_plate(int height, int width, int iterations)
 	// ne rabimo vec druge plosce
 	free_plate(second_plate, height, width);
 	
-	printf("Maximum heat difference calculated in the last iteration was %.6lf.\n", max_diff);
+	if(!TIME_MEASUREMENT)
+	{
+		printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
+	}
 	
 	return first_plate;
 }
