@@ -72,18 +72,18 @@ double **calc_heat_plate(int height, int width, int iterations)
 	
 	double max_diff;
 	
-	for(int i = 0; i < iterations; i++)
+	for(int k = 0; k < iterations; k++)
 	{
 		max_diff = 0.0;
 		
 		// v vsaki (razen v robnih) tocki izracunaj novo temperaturo na podlagi starih
-		for(int j = 1; j < height - 1; j++)
+		for(int i = 1; i < height - 1; i++)
 		{
-			for(int k = 1; k < width - 1; k++)
+			for(int j = 1; j < width - 1; j++)
 			{
-				first_plate[j][k] = calc_heat_point(second_plate, j, k);
+				first_plate[i][j] = calc_heat_point(second_plate, i, j);
 
-				double curr_diff = fabs(first_plate[j][k] - second_plate[j][k]);
+				double curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
 
 				if(curr_diff > max_diff)
 					max_diff = curr_diff;
