@@ -40,13 +40,13 @@
 
 \indent \par Program je bil testiran na sistemu, katerega specifikacije so navedene v tabeli \ref{tabela-specifikacije}.
 
-Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \times 500$) in spreminjala zgolj število iteracij. Za vsako izbrano število iteracij sva program 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako meritve, ki predstavlja razpršenost meritev okoli povprečnega časa izvajanja. Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati} in na grafu, ki je prikazan na sliki TODO:ref na sliko.
+Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \times 500$) in spreminjala zgolj število iteracij. Za vsako izbrano število iteracij sva program 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako meritve, ki predstavlja razpršenost meritev okoli povprečnega časa izvajanja. Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati-sekvencni} in na grafu, ki je prikazan na sliki \ref{graf-rezultati-sekvencni}.
 \begin{table}[H]
 \begin{center}
 \caption{Specifikacije testnega sistema.}
 \label{tabela-specifikacije}
 \begin{tabularx}{\textwidth}{|YY|}
-\hline
+\hhline{==}
 \rowcolor{light-gray} Procesor & Intel Core i5-4210U\tabularnewline
 Frekvenca procesorja & 1.70GHz \tabularnewline
 \rowcolor{light-gray} Število jeder & 2 \tabularnewline
@@ -54,16 +54,14 @@ Maksimalno število niti & 4 \tabularnewline
 \rowcolor{light-gray} Velikost predpomnilnika & 3MB \tabularnewline
 Pomnilnik & 16GB DDR3 \tabularnewline
 \rowcolor{light-gray} Grafična kartica & NVIDIA GeForce 820M 2GB DDR3 \tabularnewline
-\hline
+\hhline{==}
 \end{tabularx}
 \end{center}
 \end{table}
 
-[Work In Progress]
-Uporabljeni argumenti: 500 x 500, 1000 iteracij, NUM\_SAMPLES = 100, \textbf{TODO}: neko pametno zaokroževanje
 \begin{table}[H]
 \caption{Povprečni čas izvajanja in standardna napaka meritev v odvisnosti od števila iteracij.}
-\label{tabela-rezultati}
+\label{tabela-rezultati-sekvencni}
 \begin{center}
 \begin{tabularx}{\textwidth}{YYY}
 \hhline{===}
@@ -79,9 +77,13 @@ Uporabljeni argumenti: 500 x 500, 1000 iteracij, NUM\_SAMPLES = 100, \textbf{TOD
 \end{center}
 \end{table}
 
-\section{Razprava}
-Tuki pokomentirava mal teoretično vs praktično časovno zahtevnost. Pa napiševa še, če bi se dalo kej še izboljšat mogoče? Lahko tut ta del združiva z rezultati.
-
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.8]{rezultati_porocilo1.png}
+\end{center}
+\caption{Graf, ki prikazuje povprečni čas izvajanja programa v odvisnosti od števila iteracij.}
+\label{graf-rezultati-sekvencni}
+\end{figure}
 
 \section{Literatura? (verjetno ne)}
 \end{document}
