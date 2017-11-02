@@ -38,8 +38,13 @@
 
 \section{Rezultati}
 
+\indent \par Program je bil testiran na sistemu, katerega specifikacije so navedene v tabeli \ref{tabela-specifikacije}.
+
+Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \times 500$) in spreminjala zgolj število iteracij. Za vsako izbrano število iteracij sva program 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako meritve, ki predstavlja razpršenost meritev okoli povprečnega časa izvajanja. Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati} in na grafu, ki je prikazan na sliki TODO:ref na sliko.
 \begin{table}[H]
 \begin{center}
+\caption{Specifikacije testnega sistema.}
+\label{tabela-specifikacije}
 \begin{tabularx}{\textwidth}{|YY|}
 \hline
 \rowcolor{light-gray} Procesor & Intel Core i5-4210U\tabularnewline
@@ -52,29 +57,26 @@ Pomnilnik & 16GB DDR3 \tabularnewline
 \hline
 \end{tabularx}
 \end{center}
-\caption{Specifikacije testnega sistema.}
-\label{tabela-specifikacije}
 \end{table}
 
 [Work In Progress]
 Uporabljeni argumenti: 500 x 500, 1000 iteracij, NUM\_SAMPLES = 100, \textbf{TODO}: neko pametno zaokroževanje
 \begin{table}[H]
+\caption{Povprečni čas izvajanja in standardna napaka meritev v odvisnosti od števila iteracij.}
+\label{tabela-rezultati}
 \begin{center}
 \begin{tabularx}{\textwidth}{YYY}
 \hhline{===}
 Število iteracij & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
 \hhline{===}
-500 & 1,706007 & 0,001570 \tabularnewline
-1000 & 3,540627 & 0,015806 \tabularnewline
-2000 & 7,465591 & 0,021943 \tabularnewline
-5000 & 20,1311871 & 0.204036 \tabularnewline
-10000 & TODO & TODO \tabularnewline
-20000 & TODO & TODO \tabularnewline
-
+500 & 1,698216 & 0,001128 \tabularnewline
+1000 & 3,400018 & 0,003233 \tabularnewline
+2000 & 6,780187 & 0,002765 \tabularnewline
+5000 & 17,757139 & 0,102979 \tabularnewline
+10000 & 33,972070 & 0,026300 \tabularnewline
+20000 & 67,940464 & 0,024426 \tabularnewline
 \end{tabularx}
 \end{center}
-\caption{Povprečni čas izvajanja in standardna napaka meritev v odvisnosti od števila iteracij.}
-\label{tabela-rezultati}
 \end{table}
 
 \section{Razprava}
