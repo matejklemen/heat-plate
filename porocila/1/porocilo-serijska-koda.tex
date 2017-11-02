@@ -8,6 +8,7 @@
 \usepackage[pdftex]{graphicx} % za slike
 \usepackage{setspace}
 \usepackage{color}
+\usepackage{amsmath}
 \usepackage[table]{xcolor}
 \usepackage{tabularx}
 \usepackage{float}
@@ -33,12 +34,23 @@
 
 \section{Opis uporabljene metode}
 \subsection{Algoritem}
+Program ima dva načina delovanja. Če je nastavljena zastavica \textit{TIME\_MEASUREMENT}, se bo program za podane argumente izvedel 100-krat in izračunal nekaj uporabnih statistik. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, delovanje programa pa je predstavljeno tudi z diagramom zaporedje, vidnim na sliki \textbf{TODO: ref na sliko}.
+\indent \par Algoritem sprejme 3 argumente: višino plošče, širino plošče in število iteracij (v nadaljevanju označeno s \textit{k}), ki jih bo algoritem izvedel. Plošči, ki jo določata vnešena višina in širina, algoritem na vseh štirih stranicah doda pas širine 1, ki kasneje služi za nastavljanje robnega pogoja temperature. Novi dimenziji sta torej: 
+\[
+vi\breve{s}ina = vi\breve{s}ina + 2 \quad in \quad \breve{s}irina = \breve{s}irina + 2.
+\]
+Na začetku se alocirata dve tabeli dimenzij $ vi\breve{s}ina \times \breve{s}irina$ - ena predstavlja trenutno stanje plošče, druga pa stanje plošče v prejšnji iteraciji. Alokaciji sledi inicializacija plošče - trem stranicam (levi, desni, zgornji) algoritem nastavi temperaturo na 100$^{\circ}$C, eni (spodnji) pa na 0$^{\circ}$C. Vsem ostalim celicam plošče se zaporedno (\textit{od zgoraj navzdol, od leve proti desni}) dodeli povprečje leve sosednje, zgornje sosednje, povsem desne ter povsem spodnje celice plošče. Eno izmed plošč algoritem izbere kot ploščo trenutnega, drugo pa kot ploščo prejšnjega stanja.
+\indent \par Nato sledi glavna zanka, ki se ponovi \textit{k}-krat. V vsaki iteraciji gre algoritem skozi "dinamične" celice plošče (celice, ki niso del katerega izmed robov plošče) in za vsako celico c[i][j] v \textit{i}-ti vrstici in \textit{j}-tem stolpcu po naslednji formuli izračuna novo temperaturo:
+\[ c[i][j] = \frac{c'[i - 1][j] + c'[i][j - 1] + c'[i][j + 1] + c'[i + 1][j]}{4},\]
+kjer $c'[i][j]$ predstavlja temperaturo celice v \textit{i}-ti vrstici in \textit{j}-tem stolpcu v prejšnji iteraciji. Ob vsakem izračunu nove temperature algoritem izračuna še absolutno razliko med trenutno (novo) in prejšnjo temperaturo ter jo v primeru, da je to v trenutni iteraciji največja izračunana absolutna razlika temperatur, shrani. Ob koncu iteracije algoritem zamenja vlogi plošč - tista, ki je do sedaj predstavljala prejšnje stanje plošče, bo v naslednji iteraciji vsebovala novo stanje plošče in obratno.
+\indent \par Na koncu algoritem izpiše največjo absolutno razliko temperatur in zažene vizualizacijo končnega stanja temperaturne plošče. O vizualizaciji temperaturne plošče pa je več napisano v poglavju \ref{section-uporabljene-knjiznice} \textbf{Uporabljene knjižnice}.
 
-\subsection{Uporabljene knjižnice}
+\textbf{TODO: slika (diagram zaporedja)}
+\subsection{Uporabljene knjižnice} \label{section-uporabljene-knjiznice}
 
 \section{Rezultati}
 
-\indent \par Program je bil testiran na sistemu, katerega specifikacije so navedene v tabeli \ref{tabela-specifikacije}.
+\indent \par Program je bil testiran na sistemu, katerega specifikacije so navedene v tabeli \ref{tabela-specifikacije}. Da bi k izmerjenemu času čim manj pripomogli stroški režije operacijskega sistema, je bil sistem med testiranjem minimalno obremenjen z drugimi procesi.
 \begin{table}[H]
 \begin{center}
 \caption{Specifikacije testnega sistema.}
@@ -52,12 +64,13 @@ Maksimalno število niti & 4 \tabularnewline
 \rowcolor{light-gray} Velikost predpomnilnika & 3MB \tabularnewline
 Pomnilnik & 16GB DDR3 \tabularnewline
 \rowcolor{light-gray} Grafična kartica & NVIDIA GeForce 820M 2GB DDR3 \tabularnewline
+Operacijski sistem & Ubuntu 16.04 \tabularnewline
 \hhline{==}
 \end{tabularx}
 \end{center}
 \end{table}
 
-Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \times 500$) in spreminjala zgolj število iteracij. Za vsako izbrano število iteracij sva program 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako meritve, ki predstavlja razpršenost meritev okoli povprečnega časa izvajanja. Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati-sekvencni} in na grafu, ki je prikazan na sliki \ref{graf-rezultati-sekvencni}.
+Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \times 500$) in spreminjala zgolj število iteracij. Za vsako izbrano število iteracij sva program 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako meritve, ki predstavlja razpršenost meritev okoli povprečnega časa izvajanja. Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati-sekvencni} in z grafom, prikazanim na sliki \ref{graf-rezultati-sekvencni}.
 
 \begin{table}[H]
 \caption{Povprečni čas izvajanja in standardna napaka meritev v odvisnosti od števila iteracij.}
@@ -85,5 +98,7 @@ Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \ti
 \label{graf-rezultati-sekvencni}
 \end{figure}
 
-\section{Literatura? (verjetno ne)}
+Iz rezultatov je vidno, da sta povprečni čas izvajanja in število iteracij približno premo sorazmerna.
+\textbf{TODO}: komentar skladnosti rezultatov s teoretično časovno zahtevnostjo ($O(k\cdot h\cdot w)$, kjer je \textit{k} število iteracij, \textit{h} vnešena višina in \textit{w} vnešena širina)
+
 \end{document}
