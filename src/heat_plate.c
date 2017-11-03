@@ -93,14 +93,14 @@ double **calc_heat_plate(int height, int width, int iterations)
 		swap_pointers(&first_plate, &second_plate);
 	}
 	
-	// ne rabimo vec druge plosce
-	free_plate(second_plate, height, width);
+	// ne rabimo vec prve plosce
+	free_plate(first_plate, height, width);
 	
 	if(!TIME_MEASUREMENT)
 	{
 		printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
 	}
 	
-	return first_plate;
+	return second_plate;
 }
 
