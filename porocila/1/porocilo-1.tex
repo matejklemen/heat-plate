@@ -53,7 +53,7 @@ Iskala bova stacionarno rešitev enačbe \(\nabla^2 W = f(x, y)\), pomagala pa s
 
 \subsection{Algoritem}
 
-Program ima dva načina delovanja. Če je nastavljena zastavica \textit{TIME\_MEASUREMENT}, se bo program za podane argumente izvedel 100-krat in izračunal nekaj uporabnih statistik. Ta način je namenjen predvsem opazovanju hitrosti izvajanja programa. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, celotno delovanje programa pa je predstavljeno tudi z diagramom zaporedja, vidnim na sliki \ref{diagram-zaporedja}.
+Program ima dva načina delovanja. Če je nastavljena zastavica \textit{TIME\_MEASUREMENT}, se bo program za podane argumente izvedel 100-krat in izračunal nekaj uporabnih statistik. Ta način je namenjen predvsem opazovanju časa izvajanja programa. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, celotno delovanje programa pa je predstavljeno tudi z diagramom zaporedja, vidnim na sliki \ref{diagram-zaporedja}.
 
 Algoritem sprejme 3 argumente: višino plošče, širino plošče in število iteracij (v nadaljevanju označeno s \textit{k}), ki jih bo algoritem izvedel. Plošči, ki jo določata vnešena višina in širina, algoritem na vseh štirih stranicah doda pas širine 1, ki služi za nastavljanje robnega pogoja temperature. Novi dimenziji sta torej: 
 \[vi\breve{s}ina := vi\breve{s}ina + 2 \quad in \quad \breve{s}irina := \breve{s}irina + 2.\]
@@ -131,6 +131,6 @@ Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \ti
 \vspace{-25pt}
 \end{figure}
 
-Iz rezultatov je vidno, da je povprečni čas izvajanja linearno odvisen od števila iteracij, kar ustreza tudi teoretični časovni zahtevnosti \(O(k \cdot h \cdot w)\), kjer je \textit{k} število iteracij, \textit{h} višina, \textit{w} pa širina plošče. Točke na grafu se zelo lepo prilegajo funkciji \(t(k) = 0.003393 \cdot k + 0.150600\), iz te pa lahko razberemo, da algoritem na testnem sistemu potrebuje približno 0.003393 s za posamezno iteracijo (za \(h=w=500\)), 0.150600 s pa se porabi za ostale operacije, ki niso odvisne od števila iteracij.
+Iz rezultatov je vidno, da je povprečni čas izvajanja linearno odvisen od števila iteracij, kar ustreza tudi teoretični časovni zahtevnosti \(O(k \cdot h \cdot w)\), kjer je \textit{k} število iteracij, \textit{h} višina, \textit{w} pa širina plošče. Točke na grafu se zelo lepo prilegajo funkciji \(t(k) = 0,003 \cdot k + 0,151\), iz te pa lahko razberemo, da algoritem na testnem sistemu potrebuje približno 0,003 s za posamezno iteracijo (za \(h=w=500\)), 0,151 s pa se porabi za ostale operacije, ki niso odvisne od števila iteracij.
 
 \end{document}
