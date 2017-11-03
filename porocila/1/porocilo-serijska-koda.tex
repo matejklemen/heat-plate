@@ -29,8 +29,21 @@
 
 \maketitle
 
-\section{Opis problema (in motivacija?)}
+\section{Opis problema}
 
+\indent \par V okviru predmeta Porazdeljeni sistemi rešujeva problem temperaturne plošče. Na tem problemu bova tekom semestra spoznavala različne pristope za paralelno programiranje, ampak najprej potrebujeva osnovo - serijski algoritem.
+
+Problem tepmeraturne plošče je predstavljen s ploščo, ki je na treh straneh (zgoraj, levo in desno) segreta na 100 °C, na spodnji stranici pa ohlajena na 0 °C. Zanima nas, kako se v takem primeru toplota porazdeli po plošči (primer je na sliki \ref{primer-temperaturne-plosce}).
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{primer-temperaturne-plosce.png}
+\end{center}
+\caption{Primer temperaturne plošče.}
+\label{primer-temperaturne-plosce}
+\end{figure}
+
+Iskala bova torej stacionarno rešitev enačbe \(\nabla^2 W = f(x, y)\), pomagala pa si bova z metodo končnih diferenc. Ploščo bova najprej razdelila na mrežo točk in posameznim točkam določila začetne vrednosti. Nato bova v vsaki točki izračunala novo temperaturo na podlagi sosednjih točk. Postopek računanja novih točk se bo ponavljal, dokler rešitev ne skonvergira.
 
 \section{Opis uporabljene metode}
 \subsection{Algoritem}
@@ -46,7 +59,10 @@ kjer $c'[i][j]$ predstavlja temperaturo celice v \textit{i}-ti vrstici in \texti
 \indent \par Na koncu algoritem izpiše največjo absolutno razliko temperatur in zažene vizualizacijo končnega stanja temperaturne plošče. O vizualizaciji temperaturne plošče pa je več napisano v poglavju \ref{section-uporabljene-knjiznice} \textbf{Uporabljene knjižnice}.
 
 \textbf{TODO: slika (diagram zaporedja)}
+
 \subsection{Uporabljene knjižnice} \label{section-uporabljene-knjiznice}
+
+\indent \par Za vizualizacijo temperaturne plošče uporabljava knjižnico \textit{OpenCv}. Najprej se pripravi prazna slika (\textit{cvCreateImage}) z dimenzijami naše plošče, nato pa se za vsako točko na plošči pretvori temperaturo v 3 8-bitne kanale (rdeča, zelena, modra) in vrednosti prepiše na sliko. Če slika z največjo stranico presega \textit{MAX\_SIZE}, potem se jo še pomanjša (\textit{cvResize}). Pripravljeno sliko se prikaže (\textit{cvShowImage}) v oknu (\textit{cvNamedWindow}, \textit{cvMoveWindow}, \textit{cvResizeWindow}) in shrani na disk (\textit{cvSaveImage}). Na koncu se le še sprosti zaseden pomnilnik (\textit{cvReleaseImage}). Primer take vizualizacije je tudi slika \ref{primer-temperaturne-plosce}.
 
 \section{Rezultati}
 
