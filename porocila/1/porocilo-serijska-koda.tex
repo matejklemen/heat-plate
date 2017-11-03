@@ -33,13 +33,13 @@
 
 \indent \par V okviru predmeta Porazdeljeni sistemi rešujeva problem temperaturne plošče. Na tem problemu bova tekom semestra spoznavala različne pristope za paralelno programiranje, ampak najprej potrebujeva osnovo - serijski algoritem.
 
-Problem temperaturne plošče je predstavljen s ploščo, ki je na treh straneh (zgoraj, levo in desno) segreta na 100 °C, na spodnji stranici pa ohlajena na 0 °C. Zanima nas, kako se v takem primeru toplota porazdeli po plošči (primer je na sliki \ref{primer-temperaturne-plosce}).
+Problem temperaturne plošče je predstavljen s ploščo, ki je na treh straneh (zgoraj, levo in desno) segreta na 100 °C, na spodnji stranici pa ohlajena na 0 °C. Zanima nas, kako se v takem primeru toplota porazdeli po plošči (primer porazdelitve temperature je viden na sliki \ref{primer-temperaturne-plosce}).
 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{primer-temperaturne-plosce.png}
 \end{center}
-\caption{Primer temperaturne plošče.}
+\caption{Primer temperaturne plošče, kjer rdeča barva prikazuje najvišjo, temno modra barva pa najnižjo temperaturo.}
 \label{primer-temperaturne-plosce}
 \end{figure}
 
@@ -47,22 +47,28 @@ Iskala bova torej stacionarno rešitev enačbe \(\nabla^2 W = f(x, y)\), pomagal
 
 \section{Opis uporabljene metode}
 \subsection{Algoritem}
-Program ima dva načina delovanja. Če je nastavljena zastavica \textit{TIME\_MEASUREMENT}, se bo program za podane argumente izvedel 100-krat in izračunal nekaj uporabnih statistik. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, delovanje programa pa je predstavljeno tudi z diagramom zaporedje, vidnim na sliki \textbf{TODO: ref na sliko}.
+Program ima dva načina delovanja. Če je nastavljena zastavica \textit{TIME\_MEASUREMENT}, se bo program za podane argumente izvedel 100-krat in izračunal nekaj uporabnih statistik. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, celotno delovanje programa pa je predstavljeno tudi z diagramom zaporedja, vidnim na sliki \ref{diagram-zaporedja-sekvencni}.
 \indent \par Algoritem sprejme 3 argumente: višino plošče, širino plošče in število iteracij (v nadaljevanju označeno s \textit{k}), ki jih bo algoritem izvedel. Plošči, ki jo določata vnešena višina in širina, algoritem na vseh štirih stranicah doda pas širine 1, ki kasneje služi za nastavljanje robnega pogoja temperature. Novi dimenziji sta torej: 
 \[
 vi\breve{s}ina = vi\breve{s}ina + 2 \quad in \quad \breve{s}irina = \breve{s}irina + 2.
 \]
 Na začetku se alocirata dve tabeli dimenzij $ vi\breve{s}ina \times \breve{s}irina$ - ena predstavlja trenutno stanje plošče, druga pa stanje plošče v prejšnji iteraciji. Alokaciji sledi inicializacija plošče - trem stranicam (levi, desni, zgornji) algoritem nastavi temperaturo na 100$^{\circ}$C, eni (spodnji) pa na 0$^{\circ}$C. Vsem ostalim celicam plošče se zaporedno (\textit{od zgoraj navzdol, od leve proti desni}) dodeli povprečje leve sosednje, zgornje sosednje, povsem desne ter povsem spodnje celice plošče. Eno izmed plošč algoritem izbere kot ploščo trenutnega, drugo pa kot ploščo prejšnjega stanja.
-\indent \par Nato sledi glavna zanka, ki se ponovi \textit{k}-krat. V vsaki iteraciji gre algoritem skozi "dinamične" celice plošče (celice, ki niso del katerega izmed robov plošče) in za vsako celico c[i][j] v \textit{i}-ti vrstici in \textit{j}-tem stolpcu po naslednji formuli izračuna novo temperaturo:
+\indent \par Nato sledi glavna zanka, ki se ponovi \textit{k}-krat. V vsaki iteraciji gre algoritem skozi ``dinamične'' celice plošče (celice, ki niso del katerega izmed robov plošče) in za vsako celico c[i][j] v \textit{i}-ti vrstici in \textit{j}-tem stolpcu po naslednji formuli izračuna novo temperaturo:
 \[ c[i][j] = \frac{c'[i - 1][j] + c'[i][j - 1] + c'[i][j + 1] + c'[i + 1][j]}{4},\]
 kjer $c'[i][j]$ predstavlja temperaturo celice v \textit{i}-ti vrstici in \textit{j}-tem stolpcu v prejšnji iteraciji. Ob vsakem izračunu nove temperature algoritem izračuna še absolutno razliko med trenutno (novo) in prejšnjo temperaturo ter jo v primeru, da je to v trenutni iteraciji največja izračunana absolutna razlika temperatur, shrani. Ob koncu iteracije algoritem zamenja vlogi plošč - tista, ki je do sedaj predstavljala prejšnje stanje plošče, bo v naslednji iteraciji vsebovala novo stanje plošče in obratno.
-\indent \par Na koncu algoritem izpiše največjo absolutno razliko temperatur in zažene vizualizacijo končnega stanja temperaturne plošče. O vizualizaciji temperaturne plošče pa je več napisano v poglavju \ref{section-uporabljene-knjiznice} \textbf{Uporabljene knjižnice}.
+\indent \par Na koncu algoritem izpiše največjo absolutno razliko temperatur in zažene vizualizacijo končnega stanja temperaturne plošče. O vizualizaciji temperaturne plošče pa je več napisano v naslednjem poglavju.
 
-\textbf{TODO: slika (diagram zaporedja)}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.8]{flow.png}
+\end{center}
+\caption{Diagram zaporedja, ki prikazuje delovanje programa.}
+\label{diagram-zaporedja-sekvencni}
+\end{figure}
 
 \subsection{Uporabljene knjižnice} \label{section-uporabljene-knjiznice}
 
-\indent \par Za vizualizacijo temperaturne plošče uporabljava knjižnico \textit{OpenCv}. Najprej se pripravi prazna slika (\textit{cvCreateImage}) z dimenzijami naše plošče, nato pa se za vsako točko na plošči pretvori temperaturo v 3 8-bitne kanale (rdeča, zelena, modra) in vrednosti prepiše na sliko. Če slika z največjo stranico presega \textit{MAX\_SIZE}, potem se jo še pomanjša (\textit{cvResize}). Pripravljeno sliko se prikaže (\textit{cvShowImage}) v oknu (\textit{cvNamedWindow}, \textit{cvMoveWindow}, \textit{cvResizeWindow}) in shrani na disk (\textit{cvSaveImage}). Na koncu se le še sprosti zaseden pomnilnik (\textit{cvReleaseImage}). Primer take vizualizacije je tudi slika \ref{primer-temperaturne-plosce}.
+\indent \par Za vizualizacijo temperaturne plošče uporabljava knjižnico \textit{OpenCv}. Najprej se pripravi prazna slika (\textit{cvCreateImage}) z dimenzijami naše plošče, nato pa se za vsako točko na plošči pretvori temperaturo v 3 8-bitne kanale (rdeča, zelena, modra) in vrednosti prepiše na sliko. Če slika z največjo stranico presega \textit{MAX\_SIZE}, potem se jo še pomanjša (\textit{cvResize}). Pripravljeno sliko se prikaže (\textit{cvShowImage}) v oknu (\textit{cvNamedWindow}, \textit{cvMoveWindow}, \textit{cvResizeWindow}) in shrani na disk (\textit{cvSaveImage}). Na koncu se le še sprosti zaseden pomnilnik (\textit{cvReleaseImage}). Primer vizualizacije je viden na sliki \ref{primer-temperaturne-plosce}.
 
 \section{Rezultati}
 
@@ -73,14 +79,14 @@ kjer $c'[i][j]$ predstavlja temperaturo celice v \textit{i}-ti vrstici in \texti
 \label{tabela-specifikacije}
 \begin{tabularx}{\textwidth}{|YY|}
 \hhline{==}
-\rowcolor{light-gray} Procesor & Intel Core i5-4210U\tabularnewline
-Frekvenca procesorja & 1.70GHz \tabularnewline
-\rowcolor{light-gray} Število jeder & 2 \tabularnewline
-Maksimalno število niti & 4 \tabularnewline
-\rowcolor{light-gray} Velikost predpomnilnika & 3MB \tabularnewline
-Pomnilnik & 16GB DDR3 \tabularnewline
-\rowcolor{light-gray} Grafična kartica & NVIDIA GeForce 820M 2GB DDR3 \tabularnewline
-Operacijski sistem & Ubuntu 16.04 \tabularnewline
+Procesor: & Intel Core i5-4210U\tabularnewline
+Frekvenca procesorja: & 1.70GHz \tabularnewline
+Število jeder: & 2 \tabularnewline
+Maksimalno število niti: & 4 \tabularnewline
+Velikost predpomnilnika: & 3MB \tabularnewline
+Velikost in tip glavnega pomnilnika: & 16GB DDR3 \tabularnewline
+Grafična kartica: & NVIDIA GeForce 820M 2GB DDR3 \tabularnewline
+Operacijski sistem: & Ubuntu 16.04 \tabularnewline
 \hhline{==}
 \end{tabularx}
 \end{center}
@@ -89,7 +95,7 @@ Operacijski sistem & Ubuntu 16.04 \tabularnewline
 Pri testiranju sva se omejila na fiksno velikost temperaturne plošče ($500 \times 500$) in spreminjala zgolj število iteracij. Za vsako izbrano število iteracij sva program 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako meritve, ki predstavlja razpršenost meritev okoli povprečnega časa izvajanja. Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati-sekvencni} in z grafom, prikazanim na sliki \ref{graf-rezultati-sekvencni}.
 
 \begin{table}[H]
-\caption{Povprečni čas izvajanja in standardna napaka meritev v odvisnosti od števila iteracij.}
+\caption{Povprečni čas izvajanja programa in standardna napaka meritev v odvisnosti od števila iteracij.}
 \label{tabela-rezultati-sekvencni}
 \begin{center}
 \begin{tabularx}{\textwidth}{YYY}
