@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-static double **alloc_plate(int height, int width)
+double **alloc_plate(int height, int width)
 {
 	double **plate = (double **) malloc(sizeof(double *) * height);
 	for(int i = 0; i < height; i++)
@@ -21,7 +21,7 @@ void free_plate(double **plate, int height, int width)
 	free(plate);
 }
 
-static void init_plate(double **plate, int height, int width)
+void init_plate(double **plate, int height, int width)
 {
 	// robni pogoji: 3 stranice (zgornja, leva, desna) segrete na 100 stopinj, 1 stranica (spodnja) 0 stopinj
 	for(int i = 0; i < width; i++)
@@ -46,12 +46,12 @@ static void init_plate(double **plate, int height, int width)
 	Funkcija predpostavlja, da x in y ne morata iti izven okvirov tabel 'first' in 'second' (=> to preglej v glavni funkciji).
 	Vrne novo temperaturo.
 */
-static double calc_heat_point(double **plate, int y, int x)
+double calc_heat_point(double **plate, int y, int x)
 {
 	return (plate[y - 1][x] + plate[y + 1][x] + plate[y][x - 1] + plate[y][x + 1]) / 4;
 }
 
-static void swap_pointers(double ***first, double ***second)
+void swap_pointers(double ***first, double ***second)
 {
 	double **tmp = *first;
 	*first = *second;
