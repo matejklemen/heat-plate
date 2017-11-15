@@ -32,15 +32,15 @@ int main(int argc, char *argv[])
 	{
 		double **solution_plate = calc_heat_plate_pt(height, width, iterations);
 		
-		// IplImage *img = get_image(solution_plate, height, width);
+		IplImage *img = get_image(solution_plate, height, width);
 		
-		// show_image(img);
+		show_image(img);
 		
-		// char file_name[64];
-		// sprintf(file_name, "img/heat_plate_%s_%s_%s.png", argv[1], argv[2], argv[3]);
-		// save_image(img, file_name);
+		char file_name[64];
+		sprintf(file_name, "img/heat_plate_%s_%s_%s.png", argv[1], argv[2], argv[3]);
+		save_image(img, file_name);
 		
-		// release_image(img);
+		release_image(img);
 		
 		free_plate(solution_plate, height, width);
 	}
