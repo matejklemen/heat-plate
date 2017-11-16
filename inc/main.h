@@ -2,6 +2,6 @@
 #define MAIN_H
 
 //#define TIME_MEASUREMENTS        100
-//#define EPSILON                  0.1
+//#define EPSILON                  0.01
 
 #endif

@@ -1,9 +1,7 @@
 #include "main.h"
 #include "heat_plate.h"
-#include "heat_plate_pt.h"
 #include "visualization.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <limits.h>
 #include <time.h>
 
@@ -53,7 +51,7 @@ int main(int argc, char *argv[])
 		jo pretvorimo v sliko, to pa prikazemo in shranimo v datoteko.
 	*/
 	
-	double **solution_plate = calc_heat_plate_pt(height, width, iterations);
+	double **solution_plate = calc_heat_plate(height, width, iterations);
 	
 	IplImage *img = get_image(solution_plate, height, width);
 	
@@ -84,7 +82,7 @@ int main(int argc, char *argv[])
 	{
 		clock_gettime(CLOCK_REALTIME, &start);
 		
-		double **solution_plate = calc_heat_plate_pt(height, width, iterations);
+		double **solution_plate = calc_heat_plate(height, width, iterations);
 		free_plate(solution_plate, height, width);
 		
 		clock_gettime(CLOCK_REALTIME, &stop);

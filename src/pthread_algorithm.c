@@ -1,8 +1,7 @@
-#include "heat_plate_pt.h"
+#include "pthread_algorithm.h"
 #include "heat_plate.h"
 #include "main.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
 
@@ -67,7 +66,7 @@ static void *thread_work(void *arg)
 	return NULL;
 }
 
-double **calc_heat_plate_pt(int height, int width, int iterations)
+double **calc_heat_plate_pthread(int height, int width, int iterations)
 {
 	h = height;
 	w = width;
