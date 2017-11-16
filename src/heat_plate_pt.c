@@ -1,3 +1,4 @@
+#include "heat_plate_pt.h"
 #include "heat_plate.h"
 #include "main.h"
 #include <stdio.h>
@@ -9,6 +10,9 @@
 
 static int h, w, iter;
 static double **first_plate, **second_plate;
+
+static pthread_t thread[NUM_THREADS];
+static pthread_barrier_t barrier;
 static double max_thread_diff[NUM_THREADS];
 
 static void *thread_work(void *arg)
@@ -18,9 +22,9 @@ static void *thread_work(void *arg)
 	int row_start = 1 + (int)((double)index * (h - 2) / NUM_THREADS);
 	int row_end = 1 + (int)((double)(index + 1) * (h - 2) / NUM_THREADS);
 	
-	for(int k = 0; k < iter; i++)
+	for(int k = 0; k < iter; k++)
 	{
-		max_diff[index] = 0.0;
+		max_thread_diff[index] = 0.0;
 		
 		for(int i = row_start; i < row_end; i++)
 		{
@@ -35,12 +39,14 @@ static void *thread_work(void *arg)
 			}
 		}
 		
-		// TODO: barrier
+		pthread_barrier_wait(&barrier);
 		
 		if(index == 0)
 		{
 			swap_pointers(&first_plate, &second_plate);
 		}
+		
+		pthread_barrier_wait(&barrier);
 		
 		/*
 		double max_diff = 0.0;
@@ -51,11 +57,9 @@ static void *thread_work(void *arg)
 				max_diff = max_thread_diff[i];
 		}
 		
-		if(max_diff < EPS)
-			return NULL;
+		if(max_diff < EPSILON)
+			break;
 		*/
-		
-		// TODO: barrier
 	}
 	
 	return NULL;
@@ -63,30 +67,30 @@ static void *thread_work(void *arg)
 
 double **calc_heat_plate_pt(int height, int width, int iterations)
 {
-	// argumenti naj bodo globalni
 	h = height;
 	w = width;
 	iter = iterations;
 	
-	// naslove alociranih plosc tudi shranimo globalno
 	first_plate = alloc_plate(height, width);
 	second_plate = alloc_plate(height, width);
 	
-	// inicializacija plosc
 	init_plate(first_plate, height, width);
 	init_plate(second_plate, height, width);
 	
-	pthread_t thread[NUM_THREADS];
+	pthread_barrier_init(&barrier, NULL, NUM_THREADS);
 	
-	// inicializacija niti in racunanje
 	for(int i = 0; i < NUM_THREADS; i++)
+	{
 		pthread_create(&thread[i], NULL, thread_work, (void *)i);
+	}
 		
-	// cakanje na niti
 	for(int i = 0; i < NUM_THREADS; i++)
+	{
 		pthread_join(thread[i], NULL);
+	}
 	
-	// ne rabimo vec prve plosce
+	pthread_barrier_destroy(&barrier);
+	
 	free_plate(first_plate, height, width);
 	
 	if(!TIME_MEASUREMENT)

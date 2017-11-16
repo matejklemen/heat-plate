@@ -93,7 +93,7 @@ double **calc_heat_plate(int height, int width, int iterations)
 		swap_pointers(&first_plate, &second_plate);
 		
 		/*
-		if(max_diff < EPS)
+		if(max_diff < EPSILON)
 			break;
 		*/
 	}
