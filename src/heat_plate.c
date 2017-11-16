@@ -92,19 +92,23 @@ double **calc_heat_plate(int height, int width, int iterations)
 		
 		swap_pointers(&first_plate, &second_plate);
 		
-		/*
+#ifdef EPSILON
+		
 		if(max_diff < EPSILON)
 			break;
-		*/
+		
+#endif
+		
 	}
 	
 	// ne rabimo vec prve plosce
 	free_plate(first_plate, height, width);
 	
-	if(!TIME_MEASUREMENT)
-	{
-		printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
-	}
+#ifndef TIME_MEASUREMENTS
+	
+	printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
+	
+#endif
 	
 	return second_plate;
 }

@@ -46,9 +46,8 @@ static void *thread_work(void *arg)
 			swap_pointers(&first_plate, &second_plate);
 		}
 		
-		pthread_barrier_wait(&barrier);
+#ifdef EPSILON
 		
-		/*
 		double max_diff = 0.0;
 		
 		for(int i = 0; i < NUM_THREADS; i++)
@@ -59,7 +58,10 @@ static void *thread_work(void *arg)
 		
 		if(max_diff < EPSILON)
 			break;
-		*/
+		
+#endif
+		
+		pthread_barrier_wait(&barrier);
 	}
 	
 	return NULL;
@@ -93,18 +95,19 @@ double **calc_heat_plate_pt(int height, int width, int iterations)
 	
 	free_plate(first_plate, height, width);
 	
-	if(!TIME_MEASUREMENT)
+#ifndef TIME_MEASUREMENTS
+	
+	double max_diff = 0.0;
+	
+	for(int i = 0; i < NUM_THREADS; i++)
 	{
-		double max_diff = 0.0;
-		
-		for(int i = 0; i < NUM_THREADS; i++)
-		{
-			if(max_thread_diff[i] > max_diff)
-				max_diff = max_thread_diff[i];
-		}
-		
-		printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
+		if(max_thread_diff[i] > max_diff)
+			max_diff = max_thread_diff[i];
 	}
+	
+	printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
+	
+#endif
 	
 	return second_plate;
 }

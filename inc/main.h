@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define TIME_MEASUREMENT         0
-#define EPSILON                  0.0001
+//#define TIME_MEASUREMENTS        100
+//#define EPSILON                  0.1
 
 #endif
