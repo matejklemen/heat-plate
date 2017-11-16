@@ -9,4 +9,3 @@ void swap_pointers(double ***first, double ***second);
 double **calc_heat_plate(int height, int width, int iterations);
 
 #endif
-

@@ -9,4 +9,3 @@ void save_image(IplImage *img, const char *file_name);
 void release_image(IplImage *img);
 
 #endif
-

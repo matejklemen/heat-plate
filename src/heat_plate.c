@@ -91,6 +91,11 @@ double **calc_heat_plate(int height, int width, int iterations)
 		}
 		
 		swap_pointers(&first_plate, &second_plate);
+		
+		/*
+		if(max_diff < EPS)
+			break;
+		*/
 	}
 	
 	// ne rabimo vec prve plosce
@@ -103,4 +108,3 @@ double **calc_heat_plate(int height, int width, int iterations)
 	
 	return second_plate;
 }
-

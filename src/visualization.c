@@ -99,4 +99,3 @@ void release_image(IplImage *img)
 {
 	cvReleaseImage(&img);
 }
-
