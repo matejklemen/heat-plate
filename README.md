@@ -9,6 +9,5 @@ Project in a Distributed systems course.
 
 ## Example
 $ ./heat_plate.o 400 400 0.0005<br>
-34955 iterations.
+34955 iterations.<br><br>
 ![400x400](https://github.com/matejklemen/temperaturna-plosca/blob/master/img/heat_plate_400_400_0.0005.png)
-
