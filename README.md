@@ -8,7 +8,7 @@ Project in a Distributed systems course.
 [OpenCv](https://opencv.org/) for visualization.
 
 ## Example
-$ ./heat_plate.o 400 400 32000<br>
-Maximum heat difference calculated in the last iteration was 0.000562.<br><br>
-![400x400](https://github.com/matejklemen/temperaturna-plosca/blob/master/img/heat_plate_400_400_32000.png)
+$ ./heat_plate.o 400 400 0.0005<br>
+34955 iterations.
+![400x400](https://github.com/matejklemen/temperaturna-plosca/blob/master/img/heat_plate_400_400_0.0005.png)
 
