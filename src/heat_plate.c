@@ -57,8 +57,8 @@ void swap_pointers(double ***first, double ***second)
 	*second = tmp;
 }
 
-double **calc_heat_plate(int height, int width, int iterations)
+double **calc_heat_plate(int height, int width, double epsilon)
 {
-	//return calc_heat_plate_serial(height, width, iterations);
-	return calc_heat_plate_pthread(height, width, iterations);
+	//return calc_heat_plate_serial(height, width, epsilon);
+	return calc_heat_plate_pthread(height, width, epsilon);
 }

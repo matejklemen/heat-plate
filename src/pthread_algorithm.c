@@ -7,8 +7,10 @@
 
 #define NUM_THREADS 4
 
-static int h, w, iter;
+static int h, w;
+static double eps;
 static double **first_plate, **second_plate;
+static int iterations;
 
 static pthread_t thread[NUM_THREADS];
 static pthread_barrier_t barrier;
@@ -21,7 +23,9 @@ static void *thread_work(void *arg)
 	int row_start = 1 + (int)((double)index * (h - 2) / NUM_THREADS);
 	int row_end = 1 + (int)((double)(index + 1) * (h - 2) / NUM_THREADS);
 	
-	for(int k = 0; k < iter; k++)
+	iterations = 0;
+	
+	while(1)
 	{
 		max_thread_diff[index] = 0.0;
 		
@@ -43,22 +47,18 @@ static void *thread_work(void *arg)
 		if(index == 0)
 		{
 			swap_pointers(&first_plate, &second_plate);
+			iterations++;
 		}
 		
-#ifdef EPSILON
-		
 		double max_diff = 0.0;
-		
 		for(int i = 0; i < NUM_THREADS; i++)
 		{
 			if(max_thread_diff[i] > max_diff)
 				max_diff = max_thread_diff[i];
 		}
 		
-		if(max_diff < EPSILON)
+		if(max_diff < eps)
 			break;
-		
-#endif
 		
 		pthread_barrier_wait(&barrier);
 	}
@@ -66,11 +66,11 @@ static void *thread_work(void *arg)
 	return NULL;
 }
 
-double **calc_heat_plate_pthread(int height, int width, int iterations)
+double **calc_heat_plate_pthread(int height, int width, double epsilon)
 {
 	h = height;
 	w = width;
-	iter = iterations;
+	eps = epsilon;
 	
 	first_plate = alloc_plate(height, width);
 	second_plate = alloc_plate(height, width);
@@ -96,15 +96,7 @@ double **calc_heat_plate_pthread(int height, int width, int iterations)
 	
 #ifndef TIME_MEASUREMENTS
 	
-	double max_diff = 0.0;
-	
-	for(int i = 0; i < NUM_THREADS; i++)
-	{
-		if(max_thread_diff[i] > max_diff)
-			max_diff = max_thread_diff[i];
-	}
-	
-	printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
+	printf("%d iterations.\n", iterations);
 	
 #endif
 	

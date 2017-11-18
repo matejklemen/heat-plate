@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 
-double **calc_heat_plate_serial(int height, int width, int iterations)
+double **calc_heat_plate_serial(int height, int width, double epsilon)
 {
 	/*
 		first_plate... plosca, za katero bomo v tej iteraciji racunali nove vrednosti
@@ -16,11 +16,11 @@ double **calc_heat_plate_serial(int height, int width, int iterations)
 	init_plate(first_plate, height, width);
 	init_plate(second_plate, height, width);	
 	
-	double max_diff;
+	int iterations = 0;
 	
-	for(int k = 0; k < iterations; k++)
+	while(1)
 	{
-		max_diff = 0.0;
+		double max_diff = 0.0;
 		
 		// v vsaki (razen v robnih) tocki izracunaj novo temperaturo na podlagi starih
 		for(int i = 1; i < height - 1; i++)
@@ -37,14 +37,10 @@ double **calc_heat_plate_serial(int height, int width, int iterations)
 		}
 		
 		swap_pointers(&first_plate, &second_plate);
+		iterations++;
 		
-#ifdef EPSILON
-		
-		if(max_diff < EPSILON)
+		if(max_diff < epsilon)
 			break;
-		
-#endif
-		
 	}
 	
 	// ne rabimo vec prve plosce
@@ -52,7 +48,7 @@ double **calc_heat_plate_serial(int height, int width, int iterations)
 	
 #ifndef TIME_MEASUREMENTS
 	
-	printf("Maximum heat difference calculated in the last iteration was %lf.\n", max_diff);
+	printf("%d iterations.\n", iterations);
 	
 #endif
 	

@@ -7,42 +7,20 @@
 
 int main(int argc, char *argv[])
 {
-	
-#ifdef EPSILON
-	
-	/*
-		Ce je epsilon definiran, bo racunanje samodejno ustavljeno,
-		zato stevila iteracij ne sprejmemo kot argument, ampak
-		ga nastavimo na najvecje mozno stevilo.
-	*/
-	
-	if(argc != 3)
-	{
-		printf("Usage: \"%s <height> <width>\"\n", argv[0]);
-		return 1;
-	}
-	
-	int height = strtol(argv[1], (char **)NULL, 10) + 2;
-	int width = strtol(argv[2], (char **)NULL, 10) + 2;
-	int iterations = INT_MAX;
-	
-#else
-	
-	/*
-		Sicer, kot tretji argument zahtevamo tudi stevilo iteracij.
-	*/
+ 	/*
+		Ce stevilo argumentov ne ustreza, izpisemo primer uporabe
+		in koncamo program (vrnemo izhodni status 1).
+ 	*/
 	
 	if(argc != 4)
 	{
-		printf("Usage: \"%s <height> <width> <iterations>\"\n", argv[0]);
+		printf("Usage: \"%s <height> <width> <epsilon>\"\n", argv[0]);
 		return 1;
 	}
 	
 	int height = strtol(argv[1], (char **)NULL, 10) + 2;
 	int width = strtol(argv[2], (char **)NULL, 10) + 2;
-	int iterations = strtol(argv[3], (char **)NULL, 10);
-	
-#endif
+	double epsilon = strtod(argv[3], (char **)NULL);
 
 #ifndef TIME_MEASUREMENTS
 	
@@ -51,7 +29,7 @@ int main(int argc, char *argv[])
 		jo pretvorimo v sliko, to pa prikazemo in shranimo v datoteko.
 	*/
 	
-	double **solution_plate = calc_heat_plate(height, width, iterations);
+	double **solution_plate = calc_heat_plate(height, width, epsilon);
 	
 	IplImage *img = get_image(solution_plate, height, width);
 	
@@ -82,7 +60,7 @@ int main(int argc, char *argv[])
 	{
 		clock_gettime(CLOCK_REALTIME, &start);
 		
-		double **solution_plate = calc_heat_plate(height, width, iterations);
+		double **solution_plate = calc_heat_plate(height, width, epsilon);
 		free_plate(solution_plate, height, width);
 		
 		clock_gettime(CLOCK_REALTIME, &stop);
