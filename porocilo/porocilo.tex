@@ -105,9 +105,7 @@ Operacijski sistem: & Ubuntu 16.04 \tabularnewline
 \vspace{-25pt}
 \end{table}
 
-TODO: NAPIŠI EPSILON, ZAMENJAJ TABELO, ZAMENJAJ GRAF
-
-Pri testiranju sva se omejila na fiksno vrednost \(\varepsilon = 0,00??\) in na plošče kvadratne oblike, spreminjala pa sva zgolj velikost stranice. Za vsako izbrano velikost sva algoritem 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako (ta predstavlja razpršenost meritev okrog povprečnega časa). Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati-1} in z grafom, prikazanim na sliki \ref{graf-rezultati-1}.
+Pri testiranju sva se omejila na fiksno vrednost \(\varepsilon = 0,01\) in na plošče kvadratne oblike, spreminjala pa sva zgolj velikost stranice. Za vsako izbrano velikost sva algoritem 100-krat zagnala in vsakič izmerila čas izvajanja. Iz meritev sva nato izračunala povprečni čas izvajanja in standardno napako (ta predstavlja razpršenost meritev okrog povprečnega časa). Rezultati so navedeni tabelarično v tabeli \ref{tabela-rezultati-1} in z grafom, prikazanim na sliki \ref{graf-rezultati-1}.
 
 \begin{table}[H]
 \begin{center}
@@ -117,12 +115,11 @@ Pri testiranju sva se omejila na fiksno vrednost \(\varepsilon = 0,00??\) in na 
 \hhline{===}
 Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
 \hhline{===}
-500 & 1,698 & 0,001 \tabularnewline
-1000 & 3,400 & 0,003 \tabularnewline
-2000 & 6,780 & 0,003 \tabularnewline
-5000 & 17,757 & 0,103 \tabularnewline
-10000 & 33,972 & 0,026 \tabularnewline
-20000 & 67,940 & 0,024 \tabularnewline
+100 & 0,250 & 0,000 \tabularnewline
+200 & 0,965 & 0,001 \tabularnewline
+400 & 3,877 & 0,003 \tabularnewline
+800 & 15,516 & 0,006 \tabularnewline
+1600 & 62,272 & 0,062 \tabularnewline
 \hhline{===}
 \end{tabularx}
 \end{center}
@@ -138,9 +135,11 @@ Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napa
 \vspace{-25pt}
 \end{figure}
 
-TODO: POPRAVI CELOTEN POVZETEK REZULTATOV
+TODO: DODAJ ŠE KAKŠEN STAVEK K POVZETKU REZULTATOV
+(podatki za fit polinoma: $y = 2.441 \cdot 10^{-5} \cdot x^{2} - 1.576 \cdot 10^{-4} \cdot x + 2.324 \cdot 10^{-2}$)
 
-Iz rezultatov je vidno, da je povprečni čas izvajanja linearno odvisen od števila iteracij, kar ustreza tudi teoretični časovni zahtevnosti \(O(k \cdot h \cdot w)\), kjer je \textit{k} število iteracij, \textit{h} višina, \textit{w} pa širina plošče. Točke na grafu se zelo lepo prilegajo funkciji \(t(k) = 0,003 \cdot k + 0,151\), iz te pa lahko razberemo, da algoritem na testnem sistemu potrebuje približno 0,003 s za posamezno iteracijo (za \(h=w=500\)), 0,151 s pa se porabi za ostale operacije, ki niso odvisne od števila iteracij.
+
+Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od velikosti plošče.
 
 \pagebreak
 
@@ -148,8 +147,13 @@ Iz rezultatov je vidno, da je povprečni čas izvajanja linearno odvisen od šte
 
 \subsection{Ideja paralelizacije}
 
-Shema delitve dela med niti.
+TODO: Shema delitve dela med niti.
 
+TODO: dopolni spodnji opis.
+
+Ko niti poračunajo svoj del plošče, morajo počakati na preostale niti, saj bi lahko v nasprotnem primeru . To je doseženo s postavitvijo t.i. prepreke (angl. \textit{barrier}), ki nitim ne pusti opravljati nadaljnjega dela, dokler vse niti ne pridejo do mesta, kjer je postavljena.
+
+Sledi postopek sinhronizacije največje izračunane absolutne razlike temperature v trenutni iteraciji. Vsaka nit je ta podatek izračunala na svojem delu plošče, v tem delu pa niti pregledajo, če so vsi izračunani lokalni maksimumi pod mejo \(\varepsilon\), ki predstavlja konvergenco.
 Opis komunikacije, ki poteka med nitmi (lahko shematsko).
 
 \subsection{Rezultati}
