@@ -151,7 +151,7 @@ TODO: Shema delitve dela med niti.
 
 TODO: dopolni spodnji opis.
 
-Ko niti poračunajo svoj del plošče, morajo počakati na preostale niti, saj bi lahko v nasprotnem primeru . To je doseženo s postavitvijo t.i. prepreke (angl. \textit{barrier}), ki nitim ne pusti opravljati nadaljnjega dela, dokler vse niti ne pridejo do mesta, kjer je postavljena.
+Ko niti poračunajo svoj del plošče, morajo počakati na preostale niti, saj je nadaljnje izvajanje programa odvisno od izračunov vseh niti v trenutni iteraciji. To je doseženo s postavitvijo t.i. prepreke (angl. \textit{barrier}), ki nitim ne pusti opravljati nadaljnjega dela, dokler vse niti ne pridejo do mesta, kjer je postavljena.
 
 Sledi postopek sinhronizacije največje izračunane absolutne razlike temperature v trenutni iteraciji. Vsaka nit je ta podatek izračunala na svojem delu plošče, v tem delu pa niti pregledajo, če so vsi izračunani lokalni maksimumi pod mejo \(\varepsilon\), ki predstavlja konvergenco.
 Opis komunikacije, ki poteka med nitmi (lahko shematsko).
