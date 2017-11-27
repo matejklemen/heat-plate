@@ -135,18 +135,14 @@ Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napa
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.8]{graf-rezultati-1.png}
+\includegraphics[scale=0.54]{graf-rezultati-1.png}
 \caption{Graf, ki prikazuje povprečni čas izvajanja programa v odvisnosti od velikosti stranice.}
 \label{graf-rezultati-1}
 \end{center}
 \vspace{-25pt}
 \end{figure}
 
-TODO: DODAJ ŠE KAKŠEN STAVEK K POVZETKU REZULTATOV
-(podatki za fit polinoma: $y = 2.441 \cdot 10^{-5} \cdot x^{2} - 1.576 \cdot 10^{-4} \cdot x + 2.324 \cdot 10^{-2}$)
-
-
-Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od velikosti plošče.
+Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od velikosti stranice plošče, kar ustreza tudi teoretični časovni zahtevnosti \(O(k \cdot h \cdot w)\), kjer je \textit{k} število iteracij, \textit{h} višina, \textit{w} pa širina plošče. V našem primeru je namreč število iteracij konstantno (določeno z \(\varepsilon\)) in velja zveza \(h=w=velikost\ stranice\). Točke na grafu se zelo lepo prilegajo funkciji \(t(x) = 2,432 \cdot 10^{-5} \cdot x^{2}\), iz te pa lahko razberemo, da algoritem na testnem sistemu potrebuje približno \(2,432 \cdot 10^{-5}\) s za izračun posamezne točke (v vseh iteracijah skupaj).
 
 \pagebreak
 
