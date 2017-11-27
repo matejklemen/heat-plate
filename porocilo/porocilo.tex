@@ -23,6 +23,7 @@
 \usepackage[font=small, skip=11pt, hypcap=true]{caption}
 \usepackage{indentfirst}
 \setlength{\parskip}{11pt}
+\usepackage{multirow}
 
 \title{Temperaturna plošča}
 \author{Rok Grmek, Matej Klemen}
@@ -165,13 +166,66 @@ Sledi postopek sinhronizacije največje izračunane absolutne razlike temperatur
 
 \subsection{Rezultati}
 
-Program je bil testiran na enakem sistemu (specifikacije so navedene v tabeli \ref{tabela-specifikacije}) in pri enakih pogojih kot serijski algoritem. Za fiksno vrednost \(\varepsilon = 0,01\) sva izmerila čase pri različnih velikostih plošče in za različna števila niti. Rezultati so vidni v tabeli \textbf{XXXXX} in na grafu \textbf{XXXXX}.
+Program je bil testiran na enakem sistemu (specifikacije so navedene v tabeli \ref{tabela-specifikacije}) in pri enakih pogojih kot serijski algoritem. Za fiksno vrednost \(\varepsilon = 0,01\) sva izmerila čase pri različnih velikostih plošče in za različna števila niti. Rezultati so vidni v tabeli \ref{tabela-rezultati-2} in na grafu \ref{graf-rezultati-2}.
 
-\textbf{Tabela in graf za meritve.}
+\begin{table}[H]
+\begin{center}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka v odvisnosti od velikosti stranice ob uporabi različnega števila niti.}
+\label{tabela-rezultati-2}
+\begin{tabularx}{\textwidth}{|YYYY|}
+\hhline{====}
+Število uporabljenih niti & Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
+\hhline{====}
+\multirow{ 5}{*}{1}
+& 100 & 0,253 & 0,000 \tabularnewline
+& 200 & 0,974 & 0,000 \tabularnewline
+& 400 & 3,890 & 0,002 \tabularnewline
+& 800 & 15,935 & 0,071 \tabularnewline
+& 1600 & 62,760 & 0,052 \tabularnewline
+\hline
+\multirow{ 5}{*}{2}
+& 100 & 0,167 & 0,002 \tabularnewline
+& 200 & 0,578 & 0,006 \tabularnewline
+& 400 & 2,282 & 0,020 \tabularnewline
+& 800 & 9,130 & 0,044 \tabularnewline
+& 1600 & 35,545 & 0,030 \tabularnewline
+\hline
+\multirow{ 5}{*}{4}
+& 100 & 0,163 & 0,001 \tabularnewline
+& 200 & 0,558 & 0,001 \tabularnewline
+& 400 & 2,149 & 0,000 \tabularnewline
+& 800 & 8,557 & 0,001 \tabularnewline
+& 1600 & 33,917 & 0,005 \tabularnewline
+\hhline{====}
+\end{tabularx}
+\end{center}
+\vspace{-25pt}
+\end{table}
 
-Največja dosežena pohitritev je bila \textbf{XXXXX} in sicer v primeru štirih niti (toliko je tudi logičnih jeder na našem sistemu). V primeru večjega števila niti nam pohitritev celo pada, saj čaš še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse možne resurse. To je vidno tudi na grafu \textbf{XXXXX}.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.55]{graf-rezultati-2_1.png}
+\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnega števila niti.}
+\label{graf-rezultati-2}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
-\textbf{Graf pohitritve}
+Za lažjo analizo meritev definiramo faktor pohitritve $S$ kot:
+\begin{equation}
+S = \frac{T_s}{T_p},
+\end{equation}
+kjer je $T_s$ čas izvajanja sekvenčnega programa, $T_p$ pa čas izvajanja paralelnega programa.
+Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na našem sistemu). V primeru večjega števila niti nam pohitritev začne zopet padati, saj povprečni čas izvajanja še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse možne vire sistema. To je vidno tudi na grafu \ref{graf-rezultati-pohitritev}.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-2_2.png}
+\caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800.}
+\label{graf-rezultati-pohitritev}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 Učinkovitost (verjetno na enakih podatkih kot pohitritev). Komentar na spreminjanje učinkovitosti.
 
