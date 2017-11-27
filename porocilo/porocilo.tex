@@ -166,11 +166,11 @@ Sledi postopek sinhronizacije največje izračunane absolutne razlike temperatur
 
 \subsection{Rezultati}
 
-Program je bil testiran na enakem sistemu (specifikacije so navedene v tabeli \ref{tabela-specifikacije}) in pri enakih pogojih kot serijski algoritem. Za fiksno vrednost \(\varepsilon = 0,01\) sva izmerila čase pri različnih velikostih plošče in za različna števila niti. Rezultati so vidni v tabeli \ref{tabela-rezultati-2} in na grafu \ref{graf-rezultati-2}.
+Program je bil testiran na istem sistemu (specifikacije so navedene v tabeli \ref{tabela-specifikacije}) in pri enakih pogojih kot serijski algoritem. Za fiksno vrednost \(\varepsilon = 0,01\) sva izmerila čase pri različnih velikostih plošče in za različno število niti. Rezultati so vidni v tabeli \ref{tabela-rezultati-2} in na grafu \ref{graf-rezultati-2}.
 
 \begin{table}[H]
 \begin{center}
-\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka v odvisnosti od velikosti stranice ob uporabi različnega števila niti.}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabjenih niti.}
 \label{tabela-rezultati-2}
 \begin{tabularx}{\textwidth}{|YYYY|}
 \hhline{====}
@@ -216,7 +216,7 @@ Za lažjo analizo meritev definiramo \textbf{faktor pohitritve} $S$ kot:
 S = \frac{T_s}{T_p},
 \end{equation}
 kjer je $T_s$ čas izvajanja sekvenčnega programa, $T_p$ pa čas izvajanja paralelnega programa.
-Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na našem sistemu). Ta pohitritev je sicer le malo boljša od tiste v primeru dveh niti, ampak je tak rezultat pričakovan, saj imamo le dve fizični jedri. ``Hyper-threading'' nam ne prinese bistvene pohitritve, saj je naše računanje zahtevno tudi iz vidika pomnilniških dostopov, tukaj pa si po dve niti delita isti predpomnilnik. V primeru še večjega števila niti nam pohitritev celo pada, saj čas izvajanja še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse razpoložljive vire sistema. To je vidno tudi na grafu \ref{graf-rezultati-pohitritev}.
+Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na testnem sistemu). Ta pohitritev je sicer le malo boljša od tiste v primeru dveh niti, ampak je tak rezultat pričakovan, saj imamo le dve fizični jedri. ``Hyper-threading'' nam ne prinese bistvene pohitritve, saj je naše računanje zahtevno tudi iz vidika pomnilniških dostopov, tukaj pa si po dve niti delita isti predpomnilnik. V primeru še večjega števila niti nam faktor pohitritve celo pada, saj čas izvajanja še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse razpoložljive vire sistema. To je vidno tudi na grafu \ref{graf-rezultati-pohitritev}.
 
 \begin{figure}[H]
 \begin{center}
