@@ -69,11 +69,18 @@ Program ima dva načina delovanja. Če je definirana vrednost \textit{TIME\_MEAS
 \vspace{-25pt}
 \end{figure}
 
-Algoritem sprejme 3 argumente: višino plošče, širino plošče in mejno razliko med dvema iteracijama (v nadaljevanju označeno z \(\varepsilon\)), na podlagi katere se zaključi računanje. Plošči, ki jo določata vnešena višina in širina, algoritem na vseh štirih stranicah doda pas širine 1, ki služi za nastavljanje robnega pogoja temperature. Novi dimenziji sta torej: 
-\[vi\breve{s}ina := vi\breve{s}ina + 2 \quad in \quad \breve{s}irina := \breve{s}irina + 2.\]
+Algoritem sprejme 3 argumente: višino plošče, širino plošče in mejno razliko med dvema iteracijama (v nadaljevanju označeno z \(\varepsilon\)), na podlagi katere se zaključi računanje. Plošči, ki jo določata vnešena višina in širina, algoritem na vseh štirih stranicah doda pas širine 1, ki služi za nastavljanje robnega pogoja temperature. Novi dimenziji sta torej:
+\begin{equation}
+vi\breve{s}ina := vi\breve{s}ina + 2
+\end{equation}
+\begin{equation}
+\breve{s}irina := \breve{s}irina + 2
+\end{equation}
 Na začetku se alocirata dve tabeli dimenzij $ vi\breve{s}ina \times \breve{s}irina$. Ena predstavlja trenutno stanje plošče, druga pa stanje plošče v prejšnji iteraciji. Alokaciji sledi inicializacija plošče - trem stranicam (levi, desni, zgornji) algoritem nastavi temperaturo na 100 °C, eni (spodnji) pa na 0 °C. Vsem ostalim celicam plošče se zaporedno (\textit{od zgoraj navzdol, od leve proti desni}) dodeli povprečje leve sosednje, zgornje sosednje, povsem desne ter povsem spodnje celice plošče. Eno izmed plošč algoritem izbere kot ploščo trenutnega, drugo pa kot ploščo prejšnjega stanja.
 \indent \par Nato sledi glavna zanka. V vsaki iteraciji gre algoritem skozi ``dinamične'' celice plošče (celice, ki niso del katerega izmed robov plošče) in za vsako tako celico c[i][j] v \textit{i}-ti vrstici in \textit{j}-tem stolpcu po naslednji formuli izračuna novo temperaturo:
-\[ c[i][j] := \frac{c'[i - 1][j] + c'[i][j - 1] + c'[i][j + 1] + c'[i + 1][j]}{4},\]
+\begin{equation}
+c[i][j] := \frac{c'[i - 1][j] + c'[i][j - 1] + c'[i][j + 1] + c'[i + 1][j]}{4},
+\end{equation}
 kjer $c'[i][j]$ predstavlja temperaturo celice v \textit{i}-ti vrstici in \textit{j}-tem stolpcu v prejšnji iteraciji. Ob vsakem izračunu nove temperature algoritem izračuna še absolutno razliko med trenutno (novo) in prejšnjo temperaturo ter jo v primeru, da je to v trenutni iteraciji največja izračunana absolutna razlika temperatur, shrani. Ob koncu iteracije algoritem zamenja vlogi plošč (tista, ki je do sedaj predstavljala prejšnje stanje plošče, bo v naslednji iteraciji vsebovala novo stanje plošče in obratno), pred prehodom v naslednjo iteracijo pa preveri, če je temperaturna razlika v tej iteraciji že manjša od \(\varepsilon\) (v takem primeru se računanje zaključi).
 
 Na koncu algoritem izpiše število izvedenih iteracij in zažene vizualizacijo končnega stanja temperaturne plošče. O vizualizaciji temperaturne plošče pa je več napisano v naslednjem poglavju.
@@ -150,6 +157,18 @@ Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od vel
 TODO: Shema delitve dela med niti.
 
 TODO: dopolni spodnji opis.
+
+Na začetku vsaka nit dobi svoj identifikator iz intervala $\left[0, \breve{s}tevilo \ uporabljenih \ niti - 1\right]$. Iz tega indeksa se s pomočjo spodaj navedenih enačb izračunata spodnja in zgornja meja računanja posamezne niti.
+\begin{equation}
+spodnja \ meja := 1 + (int)\left(\frac{(double)index \cdot (h - 2)}{NUM\_THREADS}\right)
+\end{equation}
+\begin{equation}
+zgornja \ meja := 1 + (int)\left(\frac{(double)(index + 1) \cdot (h - 2)}{NUM\_THREADS}\right)
+\end{equation}
+V zgornji enačbi $index$ predstavlja identifikator niti, $h$ višino plošče, $NUM\_THREADS$ pa število niti, ki jih program uporablja. $(h - 2)$ predstavlja število vrstic, katerih temperatura ni fiksno nastavljena in jo v vsaki iteraciji ponovno računamo, ki ga želimo razdeliti. Obema mejama prištejemo 1, saj je temperatura prve vrstice fiksno nastavljena na 100 °C in zato želimo delo razdeliti od druge vrstice naprej. \\
+Delo se med niti porazdeli čim bolj enakomerno, v najboljšem primeru dobijo vse niti za izračunati enako število vrstic, v najslabšem primeru pa dobi nit z največjim identifikatorjem ($\breve{s}tevilo \ uporabljenih \ niti - 1$) eno vrstico več kot preostale niti.
+
+\textbf{Manjka še kšna poved o tem, da grejo pol niti računat}
 
 Ko niti poračunajo svoj del plošče, morajo počakati na preostale niti, saj je nadaljnje izvajanje programa odvisno od izračunov vseh niti v trenutni iteraciji. To je doseženo s postavitvijo t.i. prepreke (angl. \textit{barrier}), ki nitim ne pusti opravljati nadaljnjega dela, dokler vse niti ne pridejo do mesta, kjer je postavljena.
 
