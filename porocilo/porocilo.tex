@@ -143,7 +143,7 @@ Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napa
 \vspace{-25pt}
 \end{figure}
 
-Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od velikosti stranice plošče, kar ustreza tudi teoretični časovni zahtevnosti \(O(k \cdot h \cdot w)\), kjer je \textit{k} število iteracij, \textit{h} višina, \textit{w} pa širina plošče. V našem primeru je namreč število iteracij konstantno (določeno z \(\varepsilon\)) in velja zveza \(h=w=velikost\ stranice\). Točke na grafu se zelo lepo prilegajo funkciji \(t(x) = 2,432 \cdot 10^{-5} \cdot x^{2}\), iz te pa lahko razberemo, da algoritem na testnem sistemu potrebuje približno \(2,432 \cdot 10^{-5}\) s za izračun posamezne točke (v vseh iteracijah skupaj).
+Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od velikosti stranice plošče, kar ustreza tudi teoretični časovni zahtevnosti \(O(k \cdot h \cdot w)\), kjer je \textit{k} število iteracij, \textit{h} višina, \textit{w} pa širina plošče. V našem primeru je namreč število iteracij konstantno (določeno z \(\varepsilon\)) in velja zveza \(h=w\). Točke na grafu se zelo lepo prilegajo funkciji \(t(x) = 2,432 \cdot 10^{-5} \cdot x^{2}\), iz te pa lahko razberemo, da algoritem na testnem sistemu potrebuje približno \(2,432 \cdot 10^{-5}\) s za izračun posamezne točke (v vseh iteracijah skupaj).
 
 \pagebreak
 
@@ -216,7 +216,7 @@ Za lažjo analizo meritev definiramo faktor pohitritve $S$ kot:
 S = \frac{T_s}{T_p},
 \end{equation}
 kjer je $T_s$ čas izvajanja sekvenčnega programa, $T_p$ pa čas izvajanja paralelnega programa.
-Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na našem sistemu). V primeru večjega števila niti nam pohitritev začne zopet padati, saj povprečni čas izvajanja še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse možne vire sistema. To je vidno tudi na grafu \ref{graf-rezultati-pohitritev}.
+Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na našem sistemu). Ta pohitritev je sicer le malo boljša od tiste v primeru dveh niti, ampak je tak rezultat pričakovan, saj imamo le dve fizični jedri. ``Hyper-threading'' nam ne prinese bistvene pohitritve, saj je naše računanje zahtevno tudi iz vidika pomnilniških dostopov, tukaj pa si po dve niti delita isti predpomnilnik. V primeru še večjega števila niti nam pohitritev celo pada, saj čas izvajanja še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse razpoložljive vire sistema. To je vidno tudi na grafu \ref{graf-rezultati-pohitritev}.
 
 \begin{figure}[H]
 \begin{center}
@@ -227,8 +227,19 @@ Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih nit
 \vspace{-25pt}
 \end{figure}
 
-Učinkovitost (verjetno na enakih podatkih kot pohitritev). Komentar na spreminjanje učinkovitosti.
+Smiselno je preveriti še učinkovt $E$, ki jo izračunamo kot:
+\begin{equation}
+E = \frac{S_N}{N},
+\end{equation}
+kjer je $S_N$ pohitritev in $N$ število niti. Učinkovitost je najboljša v primeru ene same niti (\textbf{XXXXX}). Rahlo slabšo a še vedno zadovoljivo učinkovitost dosežemo tudi za dve niti (\textbf{XXXXX}), pri večjem številu niti pa ta precej pade, saj smo omejeni na zgolj dve fizični jedri. Učinkovitost v odvisnosti od števila niti je vidna na grafu \ref{graf-rezultati-ucinkovitost}.
 
-Tabela in graf za meritve.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-2_3.png}
+\caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800.}
+\label{graf-rezultati-ucinkovitost}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 \end{document}
