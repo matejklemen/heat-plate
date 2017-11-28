@@ -8,13 +8,13 @@
 #define NUM_THREADS 4
 
 static int h, w;
-static double eps;
-static double **first_plate, **second_plate;
+static float eps;
+static float **first_plate, **second_plate;
 static int iterations;
 
 static pthread_t thread[NUM_THREADS];
 static pthread_barrier_t barrier;
-static double max_thread_diff[NUM_THREADS];
+static float max_thread_diff[NUM_THREADS];
 
 static void *thread_work(void *arg)
 {
@@ -35,7 +35,7 @@ static void *thread_work(void *arg)
 			{
 				first_plate[i][j] = calc_heat_point(second_plate, i, j);
 				
-				double curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
+				float curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
 				
 				if(curr_diff > max_thread_diff[index])
 					max_thread_diff[index] = curr_diff;
@@ -50,7 +50,7 @@ static void *thread_work(void *arg)
 			iterations++;
 		}
 		
-		double max_diff = 0.0;
+		float max_diff = 0.0;
 		for(int i = 0; i < NUM_THREADS; i++)
 		{
 			if(max_thread_diff[i] > max_diff)
@@ -66,7 +66,7 @@ static void *thread_work(void *arg)
 	return NULL;
 }
 
-double **calc_heat_plate_pthread(int height, int width, double epsilon)
+float **calc_heat_plate_pthread(int height, int width, float epsilon)
 {
 	h = height;
 	w = width;

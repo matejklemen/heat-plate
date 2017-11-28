@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	
 	int height = strtol(argv[1], (char **)NULL, 10) + 2;
 	int width = strtol(argv[2], (char **)NULL, 10) + 2;
-	double epsilon = strtod(argv[3], (char **)NULL);
+	float epsilon = strtof(argv[3], (char **)NULL);
 
 #ifndef TIME_MEASUREMENTS
 	
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 		jo pretvorimo v sliko, to pa prikazemo in shranimo v datoteko.
 	*/
 	
-	double **solution_plate = calc_heat_plate(height, width, epsilon);
+	float **solution_plate = calc_heat_plate(height, width, epsilon);
 	
 	IplImage *img = get_image(solution_plate, height, width);
 	
@@ -52,15 +52,15 @@ int main(int argc, char *argv[])
 	*/
 	
 	struct timespec start, stop;
-	double samples[TIME_MEASUREMENTS];
-	double avg = 0.0;
-	double std_err = 0.0;
+	float samples[TIME_MEASUREMENTS];
+	float avg = 0.0;
+	float std_err = 0.0;
 	
 	for(int i = 0; i < TIME_MEASUREMENTS; i++)
 	{
 		clock_gettime(CLOCK_REALTIME, &start);
 		
-		double **solution_plate = calc_heat_plate(height, width, epsilon);
+		float **solution_plate = calc_heat_plate(height, width, epsilon);
 		free_plate(solution_plate, height, width);
 		
 		clock_gettime(CLOCK_REALTIME, &stop);

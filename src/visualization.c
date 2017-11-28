@@ -8,7 +8,7 @@
 	Src: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
 	Na naslove kazalcev zapise vrednosti med 0 in 1
 */
-static void heat_to_color(double normalized_value, float *rval, float *gval, float *bval)
+static void heat_to_color(float normalized_value, float *rval, float *gval, float *bval)
 {
 	const int NUM_COLORS = 6;
 	static float color[6][3] = { {0,0,1}, {0,1,1}, {0,1,0}, {1,1,0}, {1,0.5,0}, {1,0,0} };
@@ -36,7 +36,7 @@ static void heat_to_color(double normalized_value, float *rval, float *gval, flo
 	*bval = (color[idx2][2] - color[idx1][2]) * fract_between + color[idx1][2];
 }
 
-IplImage *get_image(double **plate, int h, int w)
+IplImage *get_image(float **plate, int h, int w)
 {
 	IplImage *img = cvCreateImage(cvSize(w, h), 8, 3);
 	

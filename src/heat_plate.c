@@ -3,16 +3,16 @@
 #include "serial_algorithm.h"
 #include "pthread_algorithm.h"
 
-double **alloc_plate(int height, int width)
+float **alloc_plate(int height, int width)
 {
-	double **plate = (double **) malloc(sizeof(double *) * height);
+	float **plate = (float **) malloc(sizeof(float *) * height);
 	for(int i = 0; i < height; i++)
-		plate[i] = (double *) malloc(sizeof(double) * width);
+		plate[i] = (float *) malloc(sizeof(float) * width);
 	
 	return plate;
 }
 
-void free_plate(double **plate, int height, int width)
+void free_plate(float **plate, int height, int width)
 {
 	for(int i = 0; i < height; i++)
 		free(plate[i]);
@@ -20,7 +20,7 @@ void free_plate(double **plate, int height, int width)
 	free(plate);
 }
 
-void init_plate(double **plate, int height, int width)
+void init_plate(float **plate, int height, int width)
 {
 	// robni pogoji: 3 stranice (zgornja, leva, desna) segrete na 100 stopinj, 1 stranica (spodnja) 0 stopinj
 	for(int i = 0; i < width; i++)
@@ -45,19 +45,19 @@ void init_plate(double **plate, int height, int width)
 	Funkcija predpostavlja, da x in y ne morata iti izven okvirov tabel 'first' in 'second' (=> to preglej v glavni funkciji).
 	Vrne novo temperaturo.
 */
-double calc_heat_point(double **plate, int y, int x)
+float calc_heat_point(float **plate, int y, int x)
 {
 	return (plate[y - 1][x] + plate[y + 1][x] + plate[y][x - 1] + plate[y][x + 1]) / 4;
 }
 
-void swap_pointers(double ***first, double ***second)
+void swap_pointers(float ***first, float ***second)
 {
-	double **tmp = *first;
+	float **tmp = *first;
 	*first = *second;
 	*second = tmp;
 }
 
-double **calc_heat_plate(int height, int width, double epsilon)
+float **calc_heat_plate(int height, int width, float epsilon)
 {
 	//return calc_heat_plate_serial(height, width, epsilon);
 	return calc_heat_plate_pthread(height, width, epsilon);

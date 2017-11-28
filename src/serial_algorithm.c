@@ -4,14 +4,14 @@
 #include <stdio.h>
 #include <math.h>
 
-double **calc_heat_plate_serial(int height, int width, double epsilon)
+float **calc_heat_plate_serial(int height, int width, float epsilon)
 {
 	/*
 		first_plate... plosca, za katero bomo v tej iteraciji racunali nove vrednosti
 		second_plate... plosca, iz katere bomo vzemali vrednosti za izracun novih vrednosti plosce 'first_plate'
 	*/
-	double **first_plate = alloc_plate(height, width);
-	double **second_plate = alloc_plate(height, width);
+	float **first_plate = alloc_plate(height, width);
+	float **second_plate = alloc_plate(height, width);
 	
 	init_plate(first_plate, height, width);
 	init_plate(second_plate, height, width);	
@@ -20,7 +20,7 @@ double **calc_heat_plate_serial(int height, int width, double epsilon)
 	
 	while(1)
 	{
-		double max_diff = 0.0;
+		float max_diff = 0.0;
 		
 		// v vsaki (razen v robnih) tocki izracunaj novo temperaturo na podlagi starih
 		for(int i = 1; i < height - 1; i++)
@@ -29,7 +29,7 @@ double **calc_heat_plate_serial(int height, int width, double epsilon)
 			{
 				first_plate[i][j] = calc_heat_point(second_plate, i, j);
 
-				double curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
+				float curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
 
 				if(curr_diff > max_diff)
 					max_diff = curr_diff;
