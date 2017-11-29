@@ -2,7 +2,7 @@
 Project in a Distributed systems course.
 
 ## Compiling
-\[Linux\]```g++ src/*.c -Iinc -fpermissive -lpthread `pkg-config --cflags --libs opencv` -o heat_plate.o```
+\[Linux\]```g++ src/*.c -Iinc -fpermissive -lpthread -fopenmp `pkg-config --cflags --libs opencv` -o heat_plate.o```
 
 ## Libs
 [OpenCv](https://opencv.org/) for visualization.
