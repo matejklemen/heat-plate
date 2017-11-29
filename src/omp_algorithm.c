@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <math.h>
 
-// #define NUM_THREADS 4
+#define NUM_THREADS 4
 
 static float **first_plate, **second_plate;
 static int iterations = 0;
 
 float **calc_heat_plate_omp(int height, int width, float epsilon)
 {
-	
-	
+	omp_set_num_threads(NUM_THREADS);
+
 	first_plate = alloc_plate(height, width);
 	second_plate = alloc_plate(height, width);
 	
@@ -42,7 +42,6 @@ float **calc_heat_plate_omp(int height, int width, float epsilon)
 		swap_pointers(&first_plate, &second_plate);
 		iterations++;
 		
-		printf("Max diff: %.2f\n", max_diff);
 		if(max_diff < epsilon)
 			break;
 	}
