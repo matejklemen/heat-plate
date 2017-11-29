@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "serial_algorithm.h"
 #include "pthread_algorithm.h"
+#include "omp_algorithm.h"
 
 float **alloc_plate(int height, int width)
 {
@@ -60,5 +61,6 @@ void swap_pointers(float ***first, float ***second)
 float **calc_heat_plate(int height, int width, float epsilon)
 {
 	//return calc_heat_plate_serial(height, width, epsilon);
-	return calc_heat_plate_pthread(height, width, epsilon);
+	//return calc_heat_plate_pthread(height, width, epsilon);
+	return calc_heat_plate_omp(height, width, epsilon);
 }
