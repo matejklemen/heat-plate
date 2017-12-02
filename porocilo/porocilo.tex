@@ -170,7 +170,7 @@ Program je bil testiran na istem sistemu (specifikacije so navedene v tabeli \re
 
 \begin{table}[H]
 \begin{center}
-\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabjenih niti.}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabljenih niti z uporabo knjižnice Pthreads.}
 \label{tabela-rezultati-2}
 \begin{tabularx}{\textwidth}{|YYYY|}
 \hhline{====}
@@ -241,5 +241,67 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 \end{center}
 \vspace{-25pt}
 \end{figure}
+
+\pagebreak
+
+\section{Paralelizacija s knjižnico ``OpenMP''}
+
+\subsection{Ideja paralelizacije}
+Paralelizacija poteka na podoben način kot s knjižnico Pthreads. Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
+
+Zatem vsaka nit poračuna svoj del plošče, na koncu pa niti sinhronizirajo maksimalne absolutne razlike med starimi in novimi temperaturami, ki so jih izračunale na svojem delu plošče v trenutni iteraciji. Če je največja izmed teh temperatur manjša od meje konvergence $\varepsilon$, se izračun konča, sicer pa se začne nova iteracija in ponovi postopek.
+
+V primerjavi s paralelizacijo s knjižnico Pthreads je bilo tukaj potrebno manj dela. Če zanemarimo vključevanje knjižnice OpenMP in nastavitev števila niti, ki jih program uporablja, je bila paralelizacija dosežena zgolj z naslednjo vrstico:
+\begin{lstlisting}
+#pragma omp parallel for reduction(max: max_diff).
+\end{lstlisting}
+To navodilo prevajalniku pove, naj poskrbi, da se delo porazdeli tako, kot je bilo navedeno zgoraj ter da se niti na koncu počakajo in sinhronizirajo svoje lokalne podatke.
+
+\subsection{Rezultati}
+
+\textbf{TODO} komentar rezultatov, grafi rezultatov, primerjava s Pthreads
+
+\begin{table}[H]
+\begin{center}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabljenih niti z uporabo knjižnice OpenMP.}
+\label{tabela-rezultati-3}
+\begin{tabularx}{\textwidth}{|YYYY|}
+\hhline{====}
+Število uporabljenih niti & Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
+\hhline{====}
+\multirow{ 5}{*}{1}
+& 100 & 0,253 & 0,000 \tabularnewline
+& 200 & 0,973 & 0,000 \tabularnewline
+& 400 & 3,983 & 0,007 \tabularnewline
+& 800 & 15,808 & 0,021 \tabularnewline
+& 1600 & 62,756 & 0,038 \tabularnewline
+\hline
+\multirow{ 5}{*}{2}
+& 100 & 0,146 & 0,000 \tabularnewline
+& 200 & 0,554 & 0,000 \tabularnewline
+& 400 & 2,508 & 0,025 \tabularnewline
+& 800 & 8,798 & 0,001 \tabularnewline
+& 1600 & 35,274 & 0,002 \tabularnewline
+\hline
+\multirow{ 5}{*}{4}
+& 100 & 0,140 & 0,000 \tabularnewline
+& 200 & 0,539 & 0,000 \tabularnewline
+& 400 & 2,148 & 0,001 \tabularnewline
+& 800 & 8,734 & 0,006 \tabularnewline
+& 1600 & 34,699 & 0,006 \tabularnewline
+\hline
+\multirow{ 5}{*}{8}
+& 100 & 0,193 & 0,001 \tabularnewline
+& 200 & 0,643 & 0,001 \tabularnewline
+& 400 & 2,284 & 0,002 \tabularnewline
+& 800 & 9,025 & 0,002 \tabularnewline
+& 1600 & 35,343 & 0,105 \tabularnewline
+\hhline{====}
+\end{tabularx}
+\end{center}
+\vspace{-25pt}
+\end{table}
+
+
 
 \end{document}
