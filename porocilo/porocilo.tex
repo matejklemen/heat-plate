@@ -205,7 +205,7 @@ Program je bil testiran na istem sistemu (specifikacije so navedene v tabeli \re
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.55]{graf-rezultati-2_1.png}
-\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnega števila niti.}
+\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnega števila niti (Pthreads).}
 \label{graf-rezultati-2}
 \end{center}
 \vspace{-25pt}
@@ -221,7 +221,7 @@ Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih nit
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{graf-rezultati-2_2.png}
-\caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800.}
+\caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (Pthreads).}
 \label{graf-rezultati-pohitritev}
 \end{center}
 \vspace{-25pt}
@@ -236,7 +236,7 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{graf-rezultati-2_3.png}
-\caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800.}
+\caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (Pthreads).}
 \label{graf-rezultati-ucinkovitost}
 \end{center}
 \vspace{-25pt}
@@ -261,7 +261,7 @@ To navodilo prevajalniku pove, naj poskrbi, da se delo porazdeli tako, kot je bi
 
 Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. \\
 Izmerjeni časi so zelo podobni časom, izmerjenim na programu, ki je bil paraleliziran s knjižnico Pthreads. 
-Največjo pohitritev program doseže z uporabo štirih niti, saj ima sistem štiri fizična jedra. A ta pohitritev še zdaleč ni štirikratna, kot bi bilo pričakovati v idealnem primeru (tudi tokrat tehnologija ``Hyper-threading" ni prinesla bistvene pohitritve). \\
+Največjo pohitritev program doseže z uporabo štirih niti, saj ima sistem štiri fizična jedra. A ta pohitritev še zdaleč ni štirikratna, kot bi bilo pričakovati v idealnem primeru (tudi tokrat tehnologija ``Hyper-threading'' ni prinesla bistvene pohitritve). \\
 Podobni rezultati so bili pričakovani, saj sta ideji paralelizacije pri obeh knjižnicah skoraj enaki - minimalna razlika se pojavi zgolj pri delitvi dela med nitmi. Poleg tega je lahko minimalni časovni pribitek ali pa odbitek posledica različno učinkovitih implementacij paralelnih konstruktov v posamezni knjižnici.
 
 
@@ -315,6 +315,31 @@ Podobni rezultati so bili pričakovani, saj sta ideji paralelizacije pri obeh kn
 \vspace{-25pt}
 \end{table}
 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-3_1.png}
+\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnega števila niti (OpenMP).}
+\label{graf-rezultati-3}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-3_2.png}
+\caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (OpenMP).}
+\label{graf-rezultati-pohitritev-3}
+\end{center}
+\vspace{-25pt}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-3_3.png}
+\caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (OpenMP).}
+\label{graf-rezultati-ucinkovitost-3}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 \end{document}
