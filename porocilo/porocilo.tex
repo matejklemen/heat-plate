@@ -149,7 +149,7 @@ Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od vel
 
 \section{Paralelizacija s knjižnico ``Pthreads''}
 
-\subsection{Ideja paralelizacije}
+\subsection{Ideja paralelizacije} \label{ideja-paralelizacije-pthreads}
 
 Do vključno inicializacije plošč poteka vse enako kot v serijskem algoritmu, za tem pa se delo razdeli med \textit{NUM\_THREADS} niti. Vsaka nit v posamezni iteraciji izračuna svoj delež vrstic. Pred računanjem se meje vrstic določijo na podlagi spodnjih enačb (\textit{index} predstavlja zaporedno številko niti iz intervala $\left[0, NUM\_THREADS - 1\right]$, ki jo dobi posamezna nit podano kot argument).
 \begin{equation}
@@ -247,7 +247,7 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 \section{Paralelizacija s knjižnico ``OpenMP''}
 
 \subsection{Ideja paralelizacije}
-Paralelizacija poteka na podoben način kot s knjižnico Pthreads. Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
+Paralelizacija poteka na podoben način kot paralelizacija s knjižnico Pthreads (za katero je ideja paralelizacije opisana v poglavju \ref{ideja-paralelizacije-pthreads}). Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
 
 Zatem vsaka nit poračuna svoj del plošče, na koncu pa niti sinhronizirajo maksimalne absolutne razlike med starimi in novimi temperaturami, ki so jih izračunale na svojem delu plošče v trenutni iteraciji. Če je največja izmed teh temperatur manjša od meje konvergence $\varepsilon$, se izračun konča, sicer pa se začne nova iteracija in ponovi postopek.
 
@@ -255,11 +255,17 @@ V primerjavi s paralelizacijo s knjižnico Pthreads je bilo tukaj potrebno manj 
 \begin{lstlisting}
 #pragma omp parallel for reduction(max: max_diff).
 \end{lstlisting}
-To navodilo prevajalniku pove, naj poskrbi, da se delo porazdeli tako, kot je bilo navedeno zgoraj ter da se niti na koncu počakajo in sinhronizirajo svoje lokalne podatke.
+To navodilo prevajalniku pove, naj poskrbi, da se delo porazdeli tako, kot je bilo navedeno v prvem odstavku tega poglavja ter da se niti na koncu počakajo in sinhronizirajo svoje lokalne podatke.
 
 \subsection{Rezultati}
 
-\textbf{TODO} komentar rezultatov, grafi rezultatov, primerjava s Pthreads
+Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. \\
+Izmerjeni časi so zelo podobni časom, izmerjenim na programu, ki je bil paraleliziran s knjižnico Pthreads. 
+Največjo pohitritev program doseže z uporabo štirih niti, saj ima sistem štiri fizična jedra. A ta pohitritev še zdaleč ni štirikratna, kot bi bilo pričakovati v idealnem primeru (tudi tokrat tehnologija ``Hyper-threading" ni prinesla bistvene pohitritve). \\
+Podobni rezultati so bili pričakovani, saj sta ideji paralelizacije pri obeh knjižnicah skoraj enaki - minimalna razlika se pojavi zgolj pri delitvi dela med nitmi. Poleg tega je lahko minimalni časovni pribitek ali pa odbitek posledica različno učinkovitih implementacij paralelnih konstruktov v posamezni knjižnici.
+
+
+\textbf{TODO} (dopolni) komentar rezultatov, grafi rezultatov, primerjava s Pthreads
 
 \begin{table}[H]
 \begin{center}
