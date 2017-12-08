@@ -267,7 +267,7 @@ Zatem vsaka nit poračuna svoj del plošče, na koncu pa niti sinhronizirajo mak
 
 V primerjavi s paralelizacijo s knjižnico Pthreads je bilo tukaj potrebno manj dela. Če zanemarimo vključevanje knjižnice OpenMP in nastavitev števila niti, ki jih program uporablja, je bila paralelizacija dosežena zgolj z naslednjo vrstico:
 \begin{lstlisting}
-#pragma omp parallel for reduction(max: max_diff).
+#pragma omp parallel for schedule(static) reduction(max: max_diff).
 \end{lstlisting}
 To navodilo prevajalniku pove, naj poskrbi, da se delo porazdeli tako, kot je bilo navedeno v prvem odstavku tega poglavja ter da se niti na koncu počakajo in sinhronizirajo svoje lokalne podatke.
 
