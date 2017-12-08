@@ -40,13 +40,13 @@
 
 V okviru predmeta Porazdeljeni sistemi rešujeva problem temperaturne plošče. Na tem problemu bova tekom semestra spoznavala različne pristope za paralelno programiranje.
 
-Problem temperaturne plošče je predstavljen s ploščo, ki je na treh straneh (zgoraj, levo in desno) segreta na 100 °C, na spodnji stranici pa ohlajena na 0 °C. Zanima nas, kako se v takem primeru toplota porazdeli po plošči (primer porazdelitve temperature je viden na sliki \ref{primer-temperaturne-plosce}).
+Problem temperaturne plošče je predstavljen s ploščo, ki je na treh straneh (zgoraj, levo in desno) segreta na 100 °C, na spodnji stranici pa ohlajena na 0 °C. Zanima nas, kako se v takem primeru toplota porazdeli po plošči (primer porazdelitve temperature je viden na sliki \ref{slika-primer-temperaturne-plosce}).
 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{primer-temperaturne-plosce.png}
 \caption{Primer temperaturne plošče, kjer rdeča barva prikazuje najvišjo, temno modra barva pa najnižjo temperaturo.}
-\label{primer-temperaturne-plosce}
+\label{slika-primer-temperaturne-plosce}
 \end{center}
 \vspace{-25pt}
 \end{figure}
@@ -59,13 +59,13 @@ Iskala bova stacionarno rešitev enačbe \(\nabla^2 W = f(x, y)\), pomagala pa s
 
 \subsection{Opis implementacije}
 
-Program ima dva načina delovanja. Če je definirana vrednost \textit{TIME\_MEASUREMENTS}, se bo program za podane argumente večkrat izvedel in izračunal nekaj uporabnih statistik. Ta način je namenjen predvsem opazovanju časa izvajanja programa. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, celotno delovanje programa pa je predstavljeno tudi z diagramom zaporedja, vidnim na sliki \ref{diagram-zaporedja}.
+Program ima dva načina delovanja. Če je definirana vrednost \textit{TIME\_MEASUREMENTS}, se bo program za podane argumente večkrat izvedel in izračunal nekaj uporabnih statistik. Ta način je namenjen predvsem opazovanju časa izvajanja programa. Sicer pa se bo program izvedel 1-krat in na koncu vizualiziral porazdelitev temperature na plošči. V nadaljevanju je opisan slednji način izvajanja, celotno delovanje programa pa je predstavljeno tudi z diagramom zaporedja, vidnim na sliki \ref{slika-diagram-zaporedja}.
 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.8]{diagram-zaporedja.png}
 \caption{Diagram zaporedja, ki prikazuje delovanje programa.}
-\label{diagram-zaporedja}
+\label{slika-diagram-zaporedja}
 \end{center}
 \vspace{-25pt}
 \end{figure}
@@ -86,9 +86,9 @@ kjer $c'[i][j]$ predstavlja temperaturo celice v \textit{i}-ti vrstici in \texti
 
 Na koncu algoritem izpiše število izvedenih iteracij in zažene vizualizacijo končnega stanja temperaturne plošče. O vizualizaciji temperaturne plošče pa je več napisano v naslednjem poglavju.
 
-\subsection{Uporabljene knjižnice} \label{section-uporabljene-knjiznice}
+\subsection{Uporabljene knjižnice}
 
-Za vizualizacijo temperaturne plošče uporabljava knjižnico \textit{OpenCV}. Najprej se pripravi prazna slika (\textit{cvCreateImage}) z dimenzijami naše plošče, nato pa se za vsako točko na plošči pretvori temperaturo v 3 8-bitne kanale (rdeča, zelena, modra) in vrednosti prepiše na sliko. Če slika z največjo stranico presega \textit{MAX\_SIZE}, potem se jo še pomanjša (\textit{cvResize}). Pripravljeno sliko se prikaže (\textit{cvShowImage}) v oknu (\textit{cvNamedWindow}, \textit{cvMoveWindow}, \textit{cvResizeWindow}) in shrani na disk (\textit{cvSaveImage}). Na koncu se le še sprosti zaseden pomnilnik (\textit{cvReleaseImage}). Primer vizualizacije je viden na sliki \ref{primer-temperaturne-plosce}.
+Za vizualizacijo temperaturne plošče uporabljava knjižnico \textit{OpenCV}. Najprej se pripravi prazna slika (\textit{cvCreateImage}) z dimenzijami naše plošče, nato pa se za vsako točko na plošči pretvori temperaturo v 3 8-bitne kanale (rdeča, zelena, modra) in vrednosti prepiše na sliko. Če slika z največjo stranico presega \textit{MAX\_SIZE}, potem se jo še pomanjša (\textit{cvResize}). Pripravljeno sliko se prikaže (\textit{cvShowImage}) v oknu (\textit{cvNamedWindow}, \textit{cvMoveWindow}, \textit{cvResizeWindow}) in shrani na disk (\textit{cvSaveImage}). Na koncu se le še sprosti zaseden pomnilnik (\textit{cvReleaseImage}). Primer vizualizacije je viden na sliki \ref{slika-primer-temperaturne-plosce}.
 
 \subsection{Rezultati}
 
@@ -136,7 +136,7 @@ Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napa
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.54]{graf-rezultati-1.png}
+\includegraphics[scale=0.55]{graf-rezultati-1.png}
 \caption{Graf, ki prikazuje povprečni čas izvajanja programa v odvisnosti od velikosti stranice.}
 \label{graf-rezultati-1}
 \end{center}
@@ -149,7 +149,7 @@ Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od vel
 
 \section{Paralelizacija s knjižnico ``Pthreads''}
 
-\subsection{Ideja paralelizacije} \label{ideja-paralelizacije-pthreads}
+\subsection{Ideja paralelizacije} \label{poglavje-ideja-paralelizacije-2}
 
 Do vključno inicializacije plošč poteka vse enako kot v serijskem algoritmu, za tem pa se delo razdeli med \textit{NUM\_THREADS} niti. Vsaka nit v posamezni iteraciji izračuna svoj delež vrstic. Pred računanjem se meje vrstic določijo na podlagi spodnjih enačb (\textit{index} predstavlja zaporedno številko niti iz intervala $\left[0, NUM\_THREADS - 1\right]$, ki jo dobi posamezna nit podano kot argument).
 \begin{equation}
@@ -164,7 +164,7 @@ Ko niti poračunajo svoj del plošče, morajo počakati na preostale niti, saj j
 
 Sledi postopek sinhronizacije največje izračunane absolutne razlike temperature v trenutni iteraciji. Vsaka nit je ta podatek izračunala na svojem delu plošče in ga shranila globalno, v tem delu pa posamezna nit preveri, če so vsi izračunani lokalni maksimumi pod mejo \(\varepsilon\). V takem primeru se računanje zaključi, niti se združijo in program poteka od tu naprej enako kot pri serijskem algoritmu. V nasprotnem primeru se niti počakajo (še ena prepreka) in nato hkrati začnejo novo iteracijo.
 
-\subsection{Rezultati}
+\subsection{Rezultati} \label{poglavje-rezultati-2}
 
 Program je bil testiran na istem sistemu (specifikacije so navedene v tabeli \ref{tabela-specifikacije}) in pri enakih pogojih kot serijski algoritem. Za fiksno vrednost \(\varepsilon = 0,01\) sva izmerila čase pri različnih velikostih plošče in za različno število niti. Rezultati so vidni v tabeli \ref{tabela-rezultati-2} in na grafu \ref{graf-rezultati-2}.
 
@@ -227,32 +227,31 @@ Program je bil testiran na istem sistemu (specifikacije so navedene v tabeli \re
 \end{figure}
 
 Za lažjo analizo meritev definiramo \textbf{faktor pohitritve} $S$ kot:
-\begin{equation}
+\begin{equation} \label{enacba-faktor-pohitritve}
 S = \frac{T_s}{T_p},
 \end{equation}
-kjer je $T_s$ čas izvajanja sekvenčnega programa, $T_p$ pa čas izvajanja paralelnega programa.
-Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na testnem sistemu). Ta pohitritev je sicer le malo boljša od tiste v primeru dveh niti, ampak je tak rezultat pričakovan, saj imamo le dve fizični jedri. ``Hyper-threading'' nam ne prinese bistvene pohitritve, saj je naše računanje zahtevno tudi iz vidika pomnilniških dostopov, tukaj pa si po dve niti delita isti predpomnilnik. V primeru še večjega števila niti nam faktor pohitritve celo pada, saj čas izvajanja še narašča zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse razpoložljive vire sistema. To je vidno tudi na grafu \ref{graf-rezultati-pohitritev}.
+kjer je $T_s$ čas izvajanja sekvenčnega programa, $T_p$ pa čas izvajanja paralelnega programa. Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih niti (toliko je tudi logičnih jeder na testnem sistemu). Ta pohitritev je sicer le malo boljša od tiste v primeru dveh niti, ampak je tak rezultat pričakovan, saj imamo le dve fizični jedri. ``Hyper-threading'' nam ne prinese bistvene pohitritve, saj je naše računanje zahtevno tudi iz vidika pomnilniških dostopov, tukaj pa si po dve niti delita eno fizično jedro, kar pomeni, da uporabljata tudi isti predpomnilnik in prihaja do številnih zgrešitev. Zanimiv je še primer treh niti, pri katerem dosežemo celo manjšo pohitritev kot v primeru dveh niti. To si lahko razlagamo tako. Naj bo hitrost posamezne niti enaka številu izračunanih celic plošče na enoto časa (merjeno v času, ko nit računa). Če primerjamo primer štirih niti s primerom dveh niti vidimo, da je hitrost posamezne niti manjša, ko uporabljamo štiri niti, ampak je čas, potreben za posamezno iteracijo v tem primeru vseeno manjši, ker imajo posamezne niti dodeljeno le četrtino (in ne polovico) plošče. V primeru treh niti je hitrost primerljiva s primerom štirih niti, ker si dve od treh niti delita eno fizično jedro in je skupna hitrost zaradi čakanja ob prepreki na koncu vsake iteracije odvisna od hitrosti najpočasnejše niti. Čas, potreben za posamezno iteracijo, pa je tukaj še večji od tistega v primeru dveh (in tudi štirih) niti, ker ima vsaka nit dodeljeno tretino plošče. Drugače povedano, ena od niti je hitrejša od ostalih dveh in zaradi enakomerne delitve dela prej konča z računanjem posamezne iteracije, nato pa neučinkovito čaka preostali dve niti. Tudi v primeru večjega števila niti (npr. 8) nam faktor pohitritve rahlo pada, saj čas izvajanja narašča še zaradi režije in preklapljanja med nitmi, hkrati pa že izkoriščamo vse razpoložljive vire sistema. Vse to je vidno tudi na grafu \ref{graf-rezultati-pohitritev-2}.
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.5]{graf-rezultati-2_2.png}
+\includegraphics[scale=0.55]{graf-rezultati-2_2.png}
 \caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (Pthreads).}
-\label{graf-rezultati-pohitritev}
+\label{graf-rezultati-pohitritev-2}
 \end{center}
 \vspace{-25pt}
 \end{figure}
 
 Smiselno je preveriti še \textbf{učinkovitost} oziroma izkoristek uporabljenih niti, $E$, ki jo izračunamo kot:
-\begin{equation}
+\begin{equation} \label{enacba-ucinkovitost}
 E = \frac{S_N}{N},
 \end{equation}
-kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljša v primeru ene same niti (0,974). Rahlo slabšo a še vedno zadovoljivo učinkovitost dosežemo tudi za dve niti (0,849), pri večjem številu niti pa ta precej pade, saj smo omejeni na zgolj dve fizični jedri. Učinkovitost v odvisnosti od števila niti je vidna na grafu \ref{graf-rezultati-ucinkovitost}.
+kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljša v primeru ene same niti (0,974). Rahlo slabšo a še vedno zadovoljivo učinkovitost dosežemo tudi za dve niti (0,849), pri večjem številu niti pa ta precej pade, saj smo omejeni na zgolj dve fizični jedri. Učinkovitost v odvisnosti od števila niti je vidna na grafu \ref{graf-rezultati-ucinkovitost-2}.
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.5]{graf-rezultati-2_3.png}
+\includegraphics[scale=0.55]{graf-rezultati-2_3.png}
 \caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (Pthreads).}
-\label{graf-rezultati-ucinkovitost}
+\label{graf-rezultati-ucinkovitost-2}
 \end{center}
 \vspace{-25pt}
 \end{figure}
@@ -262,7 +261,7 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 \section{Paralelizacija s knjižnico ``OpenMP''}
 
 \subsection{Ideja paralelizacije}
-Paralelizacija poteka na podoben način kot paralelizacija s knjižnico Pthreads (za katero je ideja paralelizacije opisana v poglavju \ref{ideja-paralelizacije-pthreads}). Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
+Paralelizacija poteka na podoben način kot paralelizacija s knjižnico Pthreads (za katero je ideja paralelizacije opisana v poglavju \ref{poglavje-ideja-paralelizacije-2}). Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
 
 Zatem vsaka nit poračuna svoj del plošče, na koncu pa niti sinhronizirajo maksimalne absolutne razlike med starimi in novimi temperaturami, ki so jih izračunale na svojem delu plošče v trenutni iteraciji. Če je največja izmed teh temperatur manjša od meje konvergence $\varepsilon$, se izračun konča, sicer pa se začne nova iteracija in ponovi postopek.
 
@@ -274,13 +273,7 @@ To navodilo prevajalniku pove, naj poskrbi, da se delo porazdeli tako, kot je bi
 
 \subsection{Rezultati}
 
-Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. \\
-Izmerjeni časi so zelo podobni časom, izmerjenim na programu, ki je bil paraleliziran s knjižnico Pthreads. 
-Največjo pohitritev program doseže z uporabo štirih niti, saj ima sistem štiri fizična jedra. A ta pohitritev še zdaleč ni štirikratna, kot bi bilo pričakovati v idealnem primeru (tudi tokrat tehnologija ``Hyper-threading'' ni prinesla bistvene pohitritve). \\
-Podobni rezultati so bili pričakovani, saj sta ideji paralelizacije pri obeh knjižnicah skoraj enaki - minimalna razlika se pojavi zgolj pri delitvi dela med nitmi. Poleg tega je lahko minimalni časovni pribitek ali pa odbitek posledica različno učinkovitih implementacij paralelnih konstruktov v posamezni knjižnici.
-
-
-\textbf{TODO} (dopolni) komentar rezultatov, grafi rezultatov, primerjava s Pthreads
+Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. Izmerjeni časi so zelo podobni časom, izmerjenim na programu, ki je bil paraleliziran s knjižnico Pthreads. Podobni rezultati so bili pričakovani, saj sta ideji paralelizacije pri obeh knjižnicah skoraj enaki - minimalna razlika se pojavi zgolj pri delitvi dela med niti. Poleg tega je lahko minimalni časovni pribitek ali pa odbitek posledica različno učinkovitih implementacij paralelnih konstruktov v posamezni knjižnici. Rezultati meritev so predstavljeni v tabeli \ref{tabela-rezultati-3} in na grafu \ref{graf-rezultati-3}.
 
 \begin{table}[H]
 \begin{center}
@@ -332,25 +325,29 @@ Podobni rezultati so bili pričakovani, saj sta ideji paralelizacije pri obeh kn
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-3_1.png}
+\includegraphics[scale=0.55]{graf-rezultati-3_1.png}
 \caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnega števila niti (OpenMP).}
 \label{graf-rezultati-3}
 \end{center}
 \vspace{-25pt}
 \end{figure}
 
+Za eno od plošč sva za različna števila niti izračunala faktor pohitritve po enačbi \ref{enacba-faktor-pohitritve}. Največja pohitritev (1,777-krat) je bila dosežena z uporabo štirih niti (toliko je tudi logičnih jeder). Vse vrednosti so grafično predstavljene na sliki \ref{graf-rezultati-pohitritev-3}, razlaga posameznih vrednosti pa je na voljo v poglavju \ref{poglavje-rezultati-2}, kjer so opisani popolnoma skladni rezultati paralelizacije programa s knjižnico Pthreads.
+
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-3_2.png}
+\includegraphics[scale=0.55]{graf-rezultati-3_2.png}
 \caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (OpenMP).}
 \label{graf-rezultati-pohitritev-3}
 \end{center}
 \vspace{-25pt}
 \end{figure}
 
+Po enačbi \ref{enacba-ucinkovitost} sva izračunala še učinkovitost v odvisnosti od števila niti, rezultati pa so vidni na sliki \ref{graf-rezultati-ucinkovitost-3}. Učinkovitost v primeru ene niti je bila tokrat 0,982, v primeru dveh niti pa 0,882. Ostale vrednosti so bistveno nižje, saj ima testni sistem le dve fizični jedri (rezultati so spet skladni s tistimi iz poglavja \ref{poglavje-rezultati-2}, kar je zaradi enake ideje paralelizacije popolnoma smiselno). 
+
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-3_3.png}
+\includegraphics[scale=0.55]{graf-rezultati-3_3.png}
 \caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (OpenMP).}
 \label{graf-rezultati-ucinkovitost-3}
 \end{center}
