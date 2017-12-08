@@ -190,12 +190,27 @@ Program je bil testiran na istem sistemu (specifikacije so navedene v tabeli \re
 & 800 & 9,130 & 0,044 \tabularnewline
 & 1600 & 35,545 & 0,030 \tabularnewline
 \hline
+\multirow{ 5}{*}{3}
+& 100 & 0,199 & 0,000 \tabularnewline
+& 200 & 0,729 & 0,000 \tabularnewline
+& 400 & 2,740 & 0,000 \tabularnewline
+& 800 & 10,778 & 0,002 \tabularnewline
+& 1600 & 42,850 & 0,005 \tabularnewline
+\hline
 \multirow{ 5}{*}{4}
 & 100 & 0,163 & 0,001 \tabularnewline
 & 200 & 0,558 & 0,001 \tabularnewline
 & 400 & 2,149 & 0,000 \tabularnewline
 & 800 & 8,557 & 0,001 \tabularnewline
 & 1600 & 33,917 & 0,005 \tabularnewline
+\hline
+\multirow{ 5}{*}{8}
+& 100 & 0,212 & 0,000 \tabularnewline
+& 200 & 0,680 & 0,001 \tabularnewline
+& 400 & 2,414 & 0,001 \tabularnewline
+& 800 & 8,874 & 0,003 \tabularnewline
+& 1600 & 34,636 & 0,023 \tabularnewline
+\hline
 \hhline{====}
 \end{tabularx}
 \end{center}
@@ -220,7 +235,7 @@ Največja dosežena pohitritev je bila 1,813-krat in sicer v primeru štirih nit
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-2_2.png}
+\includegraphics[scale=0.5]{graf-rezultati-2_2.png}
 \caption{Faktor pohitritve v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (Pthreads).}
 \label{graf-rezultati-pohitritev}
 \end{center}
@@ -235,7 +250,7 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-2_3.png}
+\includegraphics[scale=0.5]{graf-rezultati-2_3.png}
 \caption{Učinkovitost v odvisnosti od števila uporabljenih niti za fiksno velikost plošče 800$\times$800 (Pthreads).}
 \label{graf-rezultati-ucinkovitost}
 \end{center}
