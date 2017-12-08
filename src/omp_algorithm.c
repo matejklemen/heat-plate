@@ -25,7 +25,7 @@ float **calc_heat_plate_omp(int height, int width, float epsilon)
 		float max_diff = 0.0;
 		
 		// v vsaki (razen v robnih) tocki izracunaj novo temperaturo na podlagi starih
-		#pragma omp parallel for reduction(max: max_diff)
+		#pragma omp parallel for schedule(static) reduction(max: max_diff)
 		for(int i = 1; i < height - 1; i++)
 		{
 			for(int j = 1; j < width - 1; j++)
