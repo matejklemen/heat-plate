@@ -1,4 +1,4 @@
-__kernel void vector_add(__global float *curr_state,
+__kernel void calculate_point(__global float *curr_state,
 						 __global float *prev_state,
 						 __global float *temp_max_diff,	
 						 int height,				
