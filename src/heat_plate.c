@@ -3,6 +3,7 @@
 #include "serial_algorithm.h"
 #include "pthread_algorithm.h"
 #include "omp_algorithm.h"
+#include "opencl_algorithm.h"
 
 float **alloc_plate(int height, int width)
 {
@@ -62,5 +63,6 @@ float **calc_heat_plate(int height, int width, float epsilon)
 {
 	//return calc_heat_plate_serial(height, width, epsilon);
 	//return calc_heat_plate_pthread(height, width, epsilon);
-	return calc_heat_plate_omp(height, width, epsilon);
+	//return calc_heat_plate_omp(height, width, epsilon);
+	return calc_heat_plate_opencl(height, width, epsilon);
 }

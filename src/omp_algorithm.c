@@ -1,9 +1,9 @@
-#include <omp.h>
 #include "heat_plate.h"
 #include "omp_algorithm.h"
 #include "main.h"
 #include <stdio.h>
 #include <math.h>
+#include <omp.h>
 
 #define NUM_THREADS 4
 
