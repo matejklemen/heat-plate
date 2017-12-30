@@ -31,12 +31,8 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	source_str[source_size] = '\0';
 	fclose(fp);
 	
-	// inicializacija plosc
-	float **first_plate = alloc_plate(height, width);
-	float **second_plate = alloc_plate(height, width);
-	
-	init_plate(first_plate, height, width);
-	init_plate(second_plate, height, width);
+	float **plate = alloc_plate(height, width);
+	init_plate(plate, height, width);
 	
 	/*
 		Za shranjevanje delnih max temperaturnih razlik. S tem je implementirana
@@ -89,13 +85,13 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	*/	
 	cl_mem g_first_plate = clCreateBuffer(context,
 	                                      CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-	                                      height * width * sizeof(float), first_plate[0], &ret);
+	                                      height * width * sizeof(float), plate[0], &ret);
 	
 	printf("[Allocating (g_) first plate]: %s\n", getErrorString(ret));
 	
 	cl_mem g_second_plate = clCreateBuffer(context,
 	                                       CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-	                                       height * width * sizeof(float), second_plate[0], &ret);
+	                                       height * width * sizeof(float), plate[0], &ret);
 	
 	printf("[Allocating (g_) second plate]: %s\n", getErrorString(ret));
 	
@@ -133,8 +129,8 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	clGetKernelWorkGroupInfo(kernel, device_id[0], CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE,sizeof(buf_size_t), &buf_size_t, NULL);
 	printf("veckratnik niti = %lu\n", buf_size_t);
 	
-	cl_mem *curr_state = &g_first_plate;
-	cl_mem *prev_state = &g_second_plate;
+	cl_mem *g_first_plate_ptr = &g_first_plate;
+	cl_mem *g_second_plate_ptr = &g_second_plate;
 	
 	int num_iterations = 0;
 	
@@ -149,8 +145,8 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 		float curr_max = 0;
 		
 		// scepec: argumenti
-		ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)curr_state);
-		ret |= clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)prev_state);
+		ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)g_first_plate_ptr);
+		ret |= clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)g_second_plate_ptr);
 		ret |= clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&g_temp_max_diff);
 		ret |= clSetKernelArg(kernel, 3, sizeof(cl_int), (void *)&height);
 		ret |= clSetKernelArg(kernel, 4, sizeof(cl_int), (void *)&width);
@@ -177,14 +173,15 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 		if(curr_max < epsilon)
 			break;
 		
-		cl_mem *tmp = curr_state;
-		curr_state = prev_state;
-		prev_state = tmp;
+		// zamenjamo plosci
+		cl_mem *tmp = g_first_plate_ptr;
+		g_first_plate_ptr = g_second_plate_ptr;
+		g_second_plate_ptr = tmp;
 	}
 	
 	// kopiranje rezultatov
-	ret = clEnqueueReadBuffer(command_queue, *prev_state, CL_TRUE, 0,		
-	                          height * width * sizeof(float), second_plate[0], 0, NULL, NULL);
+	ret = clEnqueueReadBuffer(command_queue, *g_second_plate_ptr, CL_TRUE, 0,		
+	                          height * width * sizeof(float), plate[0], 0, NULL, NULL);
 	
 	// brisanje podatkov graficne kartice
 	ret = clFlush(command_queue);
@@ -197,8 +194,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	ret = clReleaseContext(context);
 	
 	// brisanje podatkov na hostu
-	free_plate(first_plate, height, width);
 	free(temp_max_diff);
 	
-	return second_plate;
+	return plate;
 }
