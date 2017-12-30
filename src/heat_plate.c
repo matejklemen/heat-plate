@@ -6,18 +6,18 @@
 
 float **alloc_plate(int height, int width)
 {
+	float *linear_buff = (float *) malloc(sizeof(float) * height * width);
+	
 	float **plate = (float **) malloc(sizeof(float *) * height);
 	for(int i = 0; i < height; i++)
-		plate[i] = (float *) malloc(sizeof(float) * width);
+		plate[i] = linear_buff + (i * width);
 	
 	return plate;
 }
 
 void free_plate(float **plate, int height, int width)
 {
-	for(int i = 0; i < height; i++)
-		free(plate[i]);
-	
+	free(plate[0]);
 	free(plate);
 }
 
