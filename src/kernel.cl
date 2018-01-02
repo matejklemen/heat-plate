@@ -1,32 +1,27 @@
 __kernel void calculate_point(__global float *curr_state,
-						 __global float *prev_state,
-						 __global float *temp_max_diff,	
-						 int height,				
-						 int width)						
+                              __global float *prev_state,
+                              __global float *temp_max_diff,
+                              int height,
+                              int width)
 {
-	int curr_cell = get_local_id(0);
-
-	// resetiramo max temperaturno razliko
-	temp_max_diff[curr_cell] = 0;
-
-	while(curr_cell < height * width)
+	int id = get_local_id(0);
+	int size = get_local_size(0);
+	
+	temp_max_diff[id] = 0.0f;
+	
+	for(int cell_idx = width + id; cell_idx < ((height - 1) * width); cell_idx += size)
 	{
-		if((curr_cell + 1) % width > 1 &&
-			curr_cell >= width &&
-			curr_cell + width < height * width)
-			curr_state[curr_cell] = (
-				prev_state[curr_cell - width] +
-				prev_state[curr_cell - 1] +
-				prev_state[curr_cell + 1] +
-				prev_state[curr_cell + width]				
-				) / 4;
-
-		float curr_diff = curr_state[curr_cell] - prev_state[curr_cell];
-		
-		int idx = get_local_id(0);
-		if(curr_diff > temp_max_diff[idx])
-			temp_max_diff[idx] = curr_diff;
-
-		curr_cell += get_local_size(0);
+		if((cell_idx + 1) % width > 1)
+		{
+			curr_state[cell_idx] = (prev_state[cell_idx - width] +
+			                        prev_state[cell_idx - 1] +
+			                        prev_state[cell_idx + 1] +
+			                        prev_state[cell_idx + width]) / 4;
+			
+			float curr_diff = curr_state[cell_idx] - prev_state[cell_idx];
+			
+			if(curr_diff > temp_max_diff[id])
+				temp_max_diff[id] = curr_diff;
+		}
 	}
 }

@@ -197,11 +197,11 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	// brisanje podatkov na hostu
 	free(temp_max_diff);
 	
-//#ifndef TIME_MEASUREMENTS
+#ifndef TIME_MEASUREMENTS
 	
 	printf("%d iterations.\n", iterations);
 	
-//#endif
+#endif
 	
 	return plate;
 }
