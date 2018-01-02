@@ -190,6 +190,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	ret = clReleaseProgram(program);
 	ret = clReleaseMemObject(g_first_plate);
 	ret = clReleaseMemObject(g_second_plate);
+	ret = clReleaseMemObject(g_temp_max_diff);
 	ret = clReleaseCommandQueue(command_queue);
 	ret = clReleaseContext(context);
 	
