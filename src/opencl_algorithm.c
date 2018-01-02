@@ -56,7 +56,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	ret = clGetDeviceIDs(platform_id[0], CL_DEVICE_TYPE_GPU, 10,	
 	                     device_id, &ret_num_devices);
 	
-	printf("[Getting device IDs] %s\n", getErrorString(ret));
+	//printf("[Getting device IDs] %s\n", getErrorString(ret));
 	
 	/*
 		kontekst - okolje za izvajanje scepca, upravljanje s pomnilnikom,...
@@ -64,12 +64,12 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	*/
 	cl_context context = clCreateContext(NULL, 1, &device_id[0], NULL, NULL, &ret);
 	
-	printf("[Creating context]: %s\n", getErrorString(ret));
+	//printf("[Creating context]: %s\n", getErrorString(ret));
  	
 	// ukazna vrsta
 	cl_command_queue command_queue = clCreateCommandQueue(context, device_id[0], 0, &ret);											
 	
-	printf("[Creating command queue]: %s\n", getErrorString(ret));
+	//printf("[Creating command queue]: %s\n", getErrorString(ret));
 	
 	// obseg dela, ki ga bo delala ena skupina
 	size_t local_item_size = MAX_WORKGROUP_SIZE;
@@ -77,7 +77,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	size_t num_groups = (height * width - 1) / local_item_size + 1;
 	size_t global_item_size = num_groups * local_item_size;
 	
-	printf("Number of groups: %lu, size of group: %lu\n", num_groups, local_item_size);
+	//printf("Number of groups: %lu, size of group: %lu\n", num_groups, local_item_size);
 	
 	/*
 		Alokacija pomnilnika na graficni kartici.
@@ -87,25 +87,25 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	                                      CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
 	                                      height * width * sizeof(float), plate[0], &ret);
 	
-	printf("[Allocating (g_) first plate]: %s\n", getErrorString(ret));
+	//printf("[Allocating (g_) first plate]: %s\n", getErrorString(ret));
 	
 	cl_mem g_second_plate = clCreateBuffer(context,
 	                                       CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
 	                                       height * width * sizeof(float), plate[0], &ret);
 	
-	printf("[Allocating (g_) second plate]: %s\n", getErrorString(ret));
+	//printf("[Allocating (g_) second plate]: %s\n", getErrorString(ret));
 	
 	cl_mem g_temp_max_diff = clCreateBuffer(context,
 	                                        CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
 	                                        MAX_WORKGROUP_SIZE * sizeof(float), temp_max_diff, &ret);
 	
-	printf("[Allocating (g_) temp_max_diff]: %s\n", getErrorString(ret));
+	//printf("[Allocating (g_) temp_max_diff]: %s\n", getErrorString(ret));
 	
 	// priprava programa
 	cl_program program = clCreateProgramWithSource(context,	1,
 	                                               (const char **)&source_str, NULL, &ret);
 	
-	printf("[Preparing program]: %s\n", getErrorString(ret));
+	//printf("[Preparing program]: %s\n", getErrorString(ret));
 	
 	// prevajanje
 	ret = clBuildProgram(program, 1, &device_id[0], NULL, NULL, NULL);
@@ -119,7 +119,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	build_log =(char *)malloc(sizeof(char)*(build_log_len+1));
 	ret = clGetProgramBuildInfo(program, device_id[0], CL_PROGRAM_BUILD_LOG, 
 	                            build_log_len, build_log, NULL);
-	printf("%s\n", build_log);
+	//printf("%s\n", build_log);
 	free(build_log);
 	
 	// scepec: priprava objekta
@@ -127,12 +127,12 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	
 	size_t buf_size_t;
 	clGetKernelWorkGroupInfo(kernel, device_id[0], CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE,sizeof(buf_size_t), &buf_size_t, NULL);
-	printf("veckratnik niti = %lu\n", buf_size_t);
+	//printf("veckratnik niti = %lu\n", buf_size_t);
 	
 	cl_mem *g_first_plate_ptr = &g_first_plate;
 	cl_mem *g_second_plate_ptr = &g_second_plate;
 	
-	int num_iterations = 0;
+	int iterations = 0;
 	
 	/*
 		1. Izracunamo novo stanje in delne max temperaturne razlike (na graficni).
@@ -141,7 +141,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	*/
 	while(1)
 	{
-		num_iterations++;
+		iterations++;
 		float curr_max = 0;
 		
 		// scepec: argumenti
@@ -159,7 +159,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 		ret = clEnqueueReadBuffer(command_queue, g_temp_max_diff, CL_TRUE, 0,		
 		                          MAX_WORKGROUP_SIZE * sizeof(float), temp_max_diff, 0, NULL, NULL);	    
 		
-		printf("[Copying results]: %s\n", getErrorString(ret));
+		//printf("[Copying results]: %s\n", getErrorString(ret));
 		
 		// redukcija (max)
 		for(int i = 0; i < MAX_WORKGROUP_SIZE; i++)
@@ -168,7 +168,7 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 				curr_max = temp_max_diff[i];
 		}
 		
-		printf("Current max diff is %.3f\n", curr_max);
+		//printf("Current max diff is %.3f\n", curr_max);
 		
 		if(curr_max < epsilon)
 			break;
@@ -195,6 +195,12 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	
 	// brisanje podatkov na hostu
 	free(temp_max_diff);
+	
+//#ifndef TIME_MEASUREMENTS
+	
+	printf("%d iterations.\n", iterations);
+	
+//#endif
 	
 	return plate;
 }
