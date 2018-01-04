@@ -359,6 +359,15 @@ Po enačbi \ref{enacba-ucinkovitost} sva izračunala še učinkovitost v odvisno
 
 \subsection{Rezultati}
 
+Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. Splača se omeniti še nekaj podrobnosti o testnem okolju, ki prej niso bile pomembne:
+\begin{itemize}
+\item pri testiranju je bila uporabljena verzija 1.2 knjižnice OpenCL,
+\item največja dovoljena velikost delovne skupine je na testnem sistemu 1024,
+\item velikost snopa na testnem sistemu je 32.
+\end{itemize}
+
+Meritve so bile opravljene pri petih različnih velikostih delovne skupine: 32, 256, 300, 512 in 1024. Izbrane so bile tako, da se iz meritev vidi, če je smiselno vedno kar nastaviti velikost skupine na največjo možno številko (ki nam jo pusti nastaviti sistem), ali pa je to odvisno od primera uporabe.
+
 \begin{table}[H]
 \begin{center}
 \caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in velikost delovne skupine pri fiksni meji konvergence $\epsilon = 0.01$ z uporabo knjižnice OpenCL.}
