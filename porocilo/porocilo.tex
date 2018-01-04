@@ -359,4 +359,53 @@ Po enačbi \ref{enacba-ucinkovitost} sva izračunala še učinkovitost v odvisno
 
 \subsection{Rezultati}
 
+\begin{table}[H]
+\begin{center}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in velikost delovne skupine pri fiksni meji konvergence $\epsilon = 0.01$ z uporabo knjižnice OpenCL.}
+\label{tabela-rezultati-4}
+\begin{tabularx}{\textwidth}{|YYYY|}
+\hhline{====}
+Velikost delovne skupine & Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
+\hhline{====}
+\multirow{ 5}{*}{32}
+& 100 & 0,139 & 0,000 \tabularnewline
+& 200 & 0,268 & 0,001 \tabularnewline
+& 400 & 0,761 & 0,000 \tabularnewline
+& 800 & 2,752 & 0,000 \tabularnewline
+& 1600 & 10,738 & 0,001 \tabularnewline
+\hline
+\multirow{ 5}{*}{256}
+& 100 & 0,111 & 0,000 \tabularnewline
+& 200 & 0,151 & 0,000 \tabularnewline
+& 400 & 0,290 & 0,000 \tabularnewline
+& 800 & 0,903 & 0,001 \tabularnewline
+& 1600 & 3,074 & 0,000 \tabularnewline
+\hline
+\multirow{ 5}{*}{300}
+& 100 & 0,105 & 0,000 \tabularnewline
+& 200 & 0,161 & 0,000 \tabularnewline
+& 400 & 0,332 & 0,001 \tabularnewline
+& 800 & 1,005 & 0,000 \tabularnewline
+& 1600 & 3,407 & 0,000 \tabularnewline
+\hline
+\multirow{ 5}{*}{512}
+& 100 & 0,107 & 0,000 \tabularnewline
+& 200 & 0,155 & 0,000 \tabularnewline
+& 400 & 0,296 & 0,000 \tabularnewline
+& 800 & 0,916 & 0,000 \tabularnewline
+& 1600 & 3,171 & 0,000 \tabularnewline
+\hline
+\multirow{ 5}{*}{1024}
+& 100 & 0,110 & 0,000 \tabularnewline
+& 200 & 0,176 & 0,000 \tabularnewline
+& 400 & 0,413 & 0,000 \tabularnewline
+& 800 & 1,420 & 0,000 \tabularnewline
+& 1600 & 4,373 & 0,000 \tabularnewline
+\hhline{====}
+\end{tabularx}
+\end{center}
+\vspace{-25pt}
+\end{table}
+
+
 \end{document}
