@@ -148,7 +148,7 @@ Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od vel
 \pagebreak
 
 \section{Paralelizacija s knjižnico ``Pthreads''}
-
+\label{poglavje-pthreads}
 \subsection{Ideja paralelizacije} \label{poglavje-ideja-paralelizacije-2}
 
 Do vključno inicializacije plošč poteka vse enako kot v serijskem algoritmu, za tem pa se delo razdeli med \textit{NUM\_THREADS} niti. Vsaka nit v posamezni iteraciji izračuna svoj delež vrstic. Pred računanjem se meje vrstic določijo na podlagi spodnjih enačb (\textit{index} predstavlja zaporedno številko niti iz intervala $\left[0, NUM\_THREADS - 1\right]$, ki jo dobi posamezna nit podano kot argument).
@@ -259,7 +259,7 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 \pagebreak
 
 \section{Paralelizacija s knjižnico ``OpenMP''}
-
+\label{poglavje-openmp}
 \subsection{Ideja paralelizacije}
 Paralelizacija poteka na podoben način kot paralelizacija s knjižnico Pthreads (za katero je ideja paralelizacije opisana v poglavju \ref{poglavje-ideja-paralelizacije-2}). Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
 
@@ -355,6 +355,7 @@ Po enačbi \ref{enacba-ucinkovitost} sva izračunala še učinkovitost v odvisno
 \end{figure}
 
 \section{Paralelizacija s knjižnico ``OpenCL''}
+\label{poglavje-opencl}
 \subsection{Ideja paralelizacije}
 
 \subsection{Rezultati}
@@ -429,14 +430,33 @@ Velikost delovne skupine & Velikost stranice [št. točk] & Povprečni čas izva
 \vspace{-25pt}
 \end{figure}
 
+Kot je bilo pričakovano, je algoritem, paraleliziran na grafični kartici, pri vseh preizkušenih velikostih delovne skupine boljši (doseže krajši povprečni čas izvajanja) kot sekvenčni algoritem.
+
+Pri manjših velikostih plošče je razlika v časih izvajanja majhna predvsem zato, ker je v tem primeru veliko režije in relativno malo računanja, grafične kartice pa svojo moč pokažejo predvsem pri računsko zahtevnih opravilih. \\
+Prejšnjo trditev dokazujejo rezultati na večjih dimenzijah plošče, največja razlika med časom izvajanja sekvenčnega algoritma in paralelnega algoritma na grafični kartici pa je pri dimenziji 1600 $\times$ 1600 - sekvenčni algoritem je v povprečju za ta izračun potreboval 62,272 sekund, paralelni algoritem na grafični kartici pa pri najboljši nastavitvi velikosti delovne skupine zgolj 3,074 sekunde.
+
+Iz rezultatov je vidno tudi, da nastavljanje velikosti delovne skupine na največjo dovoljeno številko ni nujno najboljša ideja. Najkrajši povprečni časi izvajanja namreč niso bili izmerjeni pri velikosti plošče 1024 (kolikor je največja dovoljena velikost skupine na grafični kartici na testnem sistemu), pač pa pri velikosti skupine 256. Izjema je zgolj velikost temperaturne plošče 100 $\times$ 100, kjer pa je izmerjeni povprečni čas nekaj tisočink sekunde večji od najboljšega. \\
+OpenCL omogoča tudi možnost, da ne določimo velikosti skupine eksplicitno, pač pa pustimo, da jo določi OpenCL sam. Vendar pa s tem nisva nič pridobila - časi so bili bodisi približno enaki alpa slabši kot pri velikosti plošče 256. \\
+Zato, da najbolje izkoristimo sistem, je torej bolje eksperimentalno določiti velikost delovne skupine kot pa se zanašati, da bo sistem res našel najboljšo nastavitev.
+
+Posebno zanimive so meritve pri velikosti delovne skupine 300. Kljub temu, da je velikost delovne skupine večja, sistem pri teh nastavitvah za skoraj vse testirane dimenzije plošče doseže slabše rezultate kot pri velikosti delovne skupine 256. Razlog za to je, da mora biti velikost delovne skupine za optimalno izkoriščanje virov večkratnik velikosti snopa. Še en razlog za slabše dosežene povprečne čase je bil opisan v prejšnjem odstavku (večanje velikosti delovne skupine ne prinese nujno krajšega časa izvajanja).
+ 
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.55]{graf-rezultati-4_2.png}
-\caption{TODO}
+\caption{Faktor pohitritve pri različnih velikostih delovne skupine ter fiksni velikosti plošče 800$\times$800 (OpenCL).}
 \label{graf-rezultati-pohitritev-4}
 \end{center}
 \vspace{-25pt}
 \end{figure}
+
+Slika \ref{graf-rezultati-pohitritev-4} prikazuje faktor pohitritve (določen z enačbo \ref{enacba-faktor-pohitritve}) pri različnih velikostih delovne skupine. Največja pohitritev je bila dosežena pri velikosti delovne skupine 256 (približno \textbf{17}-kratna), najmanjša pa pri velikosti delovne skupine 32 (približno \textbf{6}-kratna).
+
+Za konec pa poglejmo še, kako dobro se je algoritem, paraleliziran na grafični kartici, obnesel v primerjavi s prejšnjimi metodami paralelizacije. Več o načinu paralelizacije s knjižnicama Pthreads in OpenMP je napisano v poglavjih \ref{poglavje-pthreads} (Pthreads) in \ref{poglavje-openmp} (OpenMP).
+
+Na sliki \ref{graf-rezultati-primerjava-4} so prikazani povprečni časi izvajanja za različne velikosti temperaturne plošče, doseženi z različnimi načini paralelizacije (Pthreads, OpenMP, OpenCL). Za boljšo predstavo o doseženih izboljšavah so na grafu tudi povprečni časi, doseženi s sekvenčnim algoritmom. \\
+Paralelizacija na grafični kartici doseže tako v najboljšem kot tudi v najslabšem primeru krajši povprečni čas izvajanja kot vsi prejšnji poizkusi paralelizacije. \\
+Na grafični kartici dosežemo veliko krajše povprečne čase izvajanja kot s prejšnjimi načini zato, ker ima problem lastnosti, ki so ugodne za paralelizacijo z grafično kartico - je zelo računsko zahteven, pomnilniško pa ne toliko.
 
 \begin{figure}[H]
 \begin{center}
@@ -446,7 +466,5 @@ Velikost delovne skupine & Velikost stranice [št. točk] & Povprečni čas izva
 \end{center}
 \vspace{-25pt}
 \end{figure}
-
-\textbf{TODO:} komentiraj zakaj je 300 počasnejš, dodaj vizualizacije
 
 \end{document}
