@@ -359,7 +359,7 @@ Po enačbi \ref{enacba-ucinkovitost} sva izračunala še učinkovitost v odvisno
 
 \subsection{Rezultati}
 
-Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. Splača se omeniti še nekaj podrobnosti o testnem okolju, ki prej niso bile pomembne:
+Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}. Splača se omeniti še nekaj podrobnosti o testnem okolju, ki za potrebe prejšnjih testiranj niso bile pomembne:
 \begin{itemize}
 \item pri testiranju je bila uporabljena verzija 1.2 knjižnice OpenCL,
 \item največja dovoljena velikost delovne skupine je na testnem sistemu 1024,
@@ -367,6 +367,8 @@ Program je bil testiran na sistemu, opisanem v tabeli \ref{tabela-specifikacije}
 \end{itemize}
 
 Meritve so bile opravljene pri petih različnih velikostih delovne skupine: 32, 256, 300, 512 in 1024. Izbrane so bile tako, da se iz meritev vidi, če je smiselno vedno kar nastaviti velikost skupine na največjo možno številko (ki nam jo pusti nastaviti sistem), ali pa je to odvisno od primera uporabe.
+
+Rezultati meritev so prikazani v tabeli \ref{tabela-rezultati-4} in na grafu na sliki \ref{graf-rezultati-4}.
 
 \begin{table}[H]
 \begin{center}
@@ -416,5 +418,17 @@ Velikost delovne skupine & Velikost stranice [št. točk] & Povprečni čas izva
 \vspace{-25pt}
 \end{table}
 
+\pagebreak
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.5]{graf-rezultati-4_1.png}
+\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnih velikosti delovne skupine (OpenCL). Graf je zaradi preglednosti ``odrezan" pri povprečnem času izvajanja 20 sekund, zato je potrebno omeniti, da povprečni čas sekvenčnega algoritma izven vidnega monotono narašča in je pri velikosti plošče 1600 enak 62.272 sekund.}
+\label{graf-rezultati-4}
+\end{center}
+\vspace{-25pt}
+\end{figure}
+
+\textbf{TODO:} komentiraj zakaj je 300 počasnejš, dodaj vizualizacije
 
 \end{document}
