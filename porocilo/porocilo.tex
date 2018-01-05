@@ -379,6 +379,15 @@ Meritve so bile opravljene pri petih različnih velikostih delovne skupine: 32, 
 
 Rezultati meritev so prikazani v tabeli \ref{tabela-rezultati-4} in na grafu na sliki \ref{graf-rezultati-4}.
 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.5]{graf-rezultati-4_1.png}
+\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnih velikosti delovne skupine (OpenCL). Graf je zaradi preglednosti ``odrezan" pri povprečnem času izvajanja 20 sekund, zato je potrebno omeniti, da povprečni čas sekvenčnega algoritma izven vidnega monotono narašča in je pri velikosti plošče 1600 enak 62.272 sekund.}
+\label{graf-rezultati-4}
+\end{center}
+\vspace{-25pt}
+\end{figure}
+
 \begin{table}[H]
 \begin{center}
 \caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in velikost delovne skupine pri fiksni meji konvergence $\epsilon = 0.01$ z uporabo knjižnice OpenCL.}
@@ -428,15 +437,6 @@ Velikost delovne skupine & Velikost stranice [št. točk] & Povprečni čas izva
 \end{table}
 
 \pagebreak
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.5]{graf-rezultati-4_1.png}
-\caption{Povprečni čas izvajanja paralelnega programa glede na velikost plošče ob uporabi različnih velikosti delovne skupine (OpenCL). Graf je zaradi preglednosti ``odrezan" pri povprečnem času izvajanja 20 sekund, zato je potrebno omeniti, da povprečni čas sekvenčnega algoritma izven vidnega monotono narašča in je pri velikosti plošče 1600 enak 62.272 sekund.}
-\label{graf-rezultati-4}
-\end{center}
-\vspace{-25pt}
-\end{figure}
 
 Kot je bilo pričakovano, je algoritem, paraleliziran na grafični kartici, pri vseh preizkušenih velikostih delovne skupine boljši (doseže krajši povprečni čas izvajanja) kot sekvenčni algoritem.
 
