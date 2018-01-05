@@ -7,9 +7,8 @@
 #include <CL/cl.h>
 #include "clerrors.h"
 
-// ni ravno prenosljivo - prej pognan program, ki izpise lastnosti graficne kartice
-#define MAX_WORKGROUP_SIZE 256
-#define MAX_SOURCE_SIZE	16384
+#define WORKGROUP_SIZE 256 // preveri najvecjo mozno velikost (prej pognan program, ki izpise lastnosti graficne kartice)
+#define MAX_SOURCE_SIZE 16384
 
 float **calc_heat_plate_opencl(int height, int width, float epsilon)
 {
@@ -25,13 +24,11 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	source_str[source_size] = '\0';
 	fclose(fp);
 	
-	// podatki o platformi in napravah
+	// podatki o platformah in napravah
 	cl_platform_id platform_id[10];
-	cl_uint ret_num_platforms;
-	clGetPlatformIDs(10, platform_id, &ret_num_platforms);
+	clGetPlatformIDs(10, platform_id, NULL);
 	cl_device_id device_id[10];
-	cl_uint ret_num_devices;
-	clGetDeviceIDs(platform_id[0], CL_DEVICE_TYPE_GPU, 10, device_id, &ret_num_devices);
+	clGetDeviceIDs(platform_id[0], CL_DEVICE_TYPE_GPU, 10, device_id, NULL);
 	
 	// kontekst, ukazna vrsta, program, prevajanje, scepec
 	cl_context context = clCreateContext(NULL, 1, &device_id[0], NULL, NULL, NULL);
@@ -63,10 +60,10 @@ float **calc_heat_plate_opencl(int height, int width, float epsilon)
 	
 	// inicializacija zastavice za konec iteracij in priprava pomnilnika na graficni kartici
 	int all_difs_below_eps = 1;
-	cl_mem g_all_difs_below_eps = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(int), &all_difs_below_eps, NULL);
+	cl_mem g_all_difs_below_eps = clCreateBuffer(context, CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int), &all_difs_below_eps, NULL);
 	
 	// obseg dela
-	size_t local_item_size = MAX_WORKGROUP_SIZE;
+	size_t local_item_size = WORKGROUP_SIZE;
 	size_t global_item_size = ((height * width - 1) / local_item_size + 1) * local_item_size;
 	
 	int iterations = 0;
