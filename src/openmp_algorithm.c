@@ -1,5 +1,5 @@
+#include "openmp_algorithm.h"
 #include "heat_plate.h"
-#include "omp_algorithm.h"
 #include "main.h"
 #include <stdio.h>
 #include <math.h>
@@ -10,7 +10,7 @@
 static float **first_plate, **second_plate;
 static int iterations = 0;
 
-float **calc_heat_plate_omp(int height, int width, float epsilon)
+float **calc_heat_plate_openmp(int height, int width, float epsilon)
 {
 	omp_set_num_threads(NUM_THREADS);
 

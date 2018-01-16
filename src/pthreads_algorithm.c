@@ -1,4 +1,4 @@
-#include "pthread_algorithm.h"
+#include "pthreads_algorithm.h"
 #include "heat_plate.h"
 #include "main.h"
 #include <stdio.h>
@@ -66,7 +66,7 @@ static void *thread_work(void *arg)
 	return NULL;
 }
 
-float **calc_heat_plate_pthread(int height, int width, float epsilon)
+float **calc_heat_plate_pthreads(int height, int width, float epsilon)
 {
 	h = height;
 	w = width;

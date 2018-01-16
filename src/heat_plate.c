@@ -1,9 +1,10 @@
 #include "heat_plate.h"
 #include <stdlib.h>
 #include "serial_algorithm.h"
-#include "pthread_algorithm.h"
-#include "omp_algorithm.h"
+#include "pthreads_algorithm.h"
+#include "openmp_algorithm.h"
 #include "opencl_algorithm.h"
+#include "mpi_algorithm.h"
 
 float **alloc_plate(int height, int width)
 {
@@ -62,7 +63,8 @@ void swap_pointers(float ***first, float ***second)
 float **calc_heat_plate(int height, int width, float epsilon)
 {
 	//return calc_heat_plate_serial(height, width, epsilon);
-	//return calc_heat_plate_pthread(height, width, epsilon);
-	//return calc_heat_plate_omp(height, width, epsilon);
-	return calc_heat_plate_opencl(height, width, epsilon);
+	//return calc_heat_plate_pthreads(height, width, epsilon);
+	//return calc_heat_plate_openmp(height, width, epsilon);
+	//return calc_heat_plate_opencl(height, width, epsilon);
+	return calc_heat_plate_mpi(height, width, epsilon);
 }
