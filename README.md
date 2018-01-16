@@ -5,13 +5,8 @@ Project in a Distributed systems course.
 \[Linux\]```mpic++ src/*.c -Iinc -o heat_plate.o `pkg-config --cflags --libs opencv` -lpthread -fpermissive -fopenmp -lOpenCL```
 
 ## Libs
-Visualization:
-	[OpenCV](https://opencv.org/)
-Parallelization:
-	[Pthreads](https://en.wikipedia.org/wiki/POSIX_Threads)
-	[OpenMP](http://www.openmp.org/)
-	[OpenCL](https://en.wikipedia.org/wiki/OpenCL)
-	[MPI](https://www.open-mpi.org/)
+Visualization: [OpenCV](https://opencv.org/)<br>
+Parallelization: [Pthreads](https://en.wikipedia.org/wiki/POSIX_Threads), [OpenMP](http://www.openmp.org/), [OpenCL](https://en.wikipedia.org/wiki/OpenCL), [MPI](https://www.open-mpi.org/)
 
 ## Example
 $ ./heat_plate.o 400 400 0.0005<br>
