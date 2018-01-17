@@ -62,8 +62,8 @@ int main(int argc, char *argv[])
 	MPI_Init(&argc, &argv);
 	
 	// argumenti
-	int height = strtol(argv[1], (char **)NULL, 10);
-	int width = strtol(argv[2], (char **)NULL, 10);
+	int height = strtol(argv[1], (char **)NULL, 10) + 2;
+	int width = strtol(argv[2], (char **)NULL, 10) + 2;
 	float epsilon = strtof(argv[3], (char **)NULL);
 	
 	// id procesa in stevilo vseh procesov
@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 	int n = floor(sqrt(size));
 	if(id >= n*n)
 	{
+		MPI_Finalize();
 		return 0;
 	}
 	
@@ -94,7 +95,8 @@ int main(int argc, char *argv[])
 	
 	while(1)
 	{
-		float max_diff = 0.0;
+		float local_max_diff = 0.0;
+		float global_max_diff = 0.0;
 		
 		for(int i = y_start; i < y_end; i++)
 		{
@@ -104,19 +106,17 @@ int main(int argc, char *argv[])
 				
 				float curr_diff = fabs(first_plate[i][j] - second_plate[i][j]);
 				
-				if(curr_diff > max_diff)
-					max_diff = curr_diff;
+				if(curr_diff > local_max_diff)
+					local_max_diff = curr_diff;
 			}
 		}
 		
 		swap_pointers(&first_plate, &second_plate);
 		iterations++;
 		
-		// TO-DO: barrier
+		MPI_Allreduce(&local_max_diff, &global_max_diff, 1, MPI_FLOAT, MPI_MAX, MPI_COMM_WORLD);
 		
-		// TO-DO: redukcija -> max_diff naj bo v vsakem procecsu max od vseh max_diff
-		
-		if(max_diff < epsilon)
+		if(global_max_diff < epsilon)
 			break;
 		
 		// TO-DO: izmenjaj robove od second plate
@@ -126,7 +126,17 @@ int main(int argc, char *argv[])
 	
 	if(id == 0)
 	{
-		// TO-DO: zberi plosco nazaj v plate (vse na second plate)
+		for(int p = 1; p < n*n; p++)
+		{
+			x_start = 1 + (int)((double)(p % n) * (width - 2) / n);
+			x_end = 1 + (int)((double)((p % n) + 1) * (width - 2) / n);
+			y_start = 1 + (int)((double)(p / n) * (height - 2) / n);
+			y_end = 1 + (int)((double)((p / n) + 1) * (height - 2) / n);
+			for(int i = y_start; i < y_end; i++)
+			{
+				MPI_Recv(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, p, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			}
+		}
 		
 		FILE* fp = fopen("plate.data", "wb");
 		if(fp)
@@ -135,6 +145,15 @@ int main(int argc, char *argv[])
 		}
 		fclose(fp);
 	}
+	else
+	{
+		for(int i = y_start; i < y_end; i++)
+		{
+			MPI_Send(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, 0, i, MPI_COMM_WORLD);
+		}
+	}
+	
+	MPI_Barrier(MPI_COMM_WORLD);
 	
 	free_plate(first_plate, height, width);
 	free_plate(second_plate, height, width);

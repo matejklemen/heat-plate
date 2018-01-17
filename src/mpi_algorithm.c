@@ -8,7 +8,7 @@
 float **calc_heat_plate_mpi(int height, int width, float epsilon)
 {
 	char cmd[128];
-	sprintf(cmd, "mpirun -np %d mpi_program.o %d %d %f", NUM_PROCESSES, height, width, epsilon);
+	sprintf(cmd, "mpirun -np %d mpi_program.o %d %d %f", NUM_PROCESSES, height - 2, width - 2, epsilon);
 	system(cmd);
 	
 	float **plate = alloc_plate(height, width);
