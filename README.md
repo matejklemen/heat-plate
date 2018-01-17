@@ -2,7 +2,7 @@
 Project in a Distributed systems course.
 
 ## Compiling
-\[Linux\]```mpic++ src/node_src/mpi_program.c src/heat_plate.c src/mpi_algorithm.c -Iinc -o mpi_program.o && g++ src/*.c -Iinc -o heat_plate.o `pkg-config --cflags --libs opencv` -lpthread -fpermissive -fopenmp -lOpenCL```
+\[Linux\]```mpic++ src/node_src/mpi_program.c -o mpi_program.o && g++ src/*.c -Iinc -o heat_plate.o `pkg-config --cflags --libs opencv` -lpthread -fpermissive -fopenmp -lOpenCL```
 
 ## Libs
 Visualization: [OpenCV](https://opencv.org/)<br>
