@@ -13,7 +13,7 @@
 float **calc_heat_plate_opencl(int height, int width, float epsilon)
 {
 	// branje datoteke
-	FILE *fp = fopen("src/kernel.cl", "r");
+	FILE *fp = fopen("src/node_src/opencl_program.cl", "r");
 	if(!fp)
 	{
 		fprintf(stderr, "Error reading the file\n");
