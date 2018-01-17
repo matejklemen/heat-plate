@@ -1,8 +1,24 @@
 #include "mpi_algorithm.h"
+#include "heat_plate.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NUM_PROCESSES 4
 
 float **calc_heat_plate_mpi(int height, int width, float epsilon)
 {
-	// TO-DO: call mpi_program.o, get plate as float** and return it
+	char cmd[128];
+	sprintf(cmd, "mpirun -np %d mpi_program.o %d %d %f", NUM_PROCESSES, height, width, epsilon);
+	system(cmd);
 	
-	return 0;
+	float **plate = alloc_plate(height, width);
+	FILE* fp = fopen("plate.data", "rb");
+	if(fp)
+	{
+	    fread(plate[0], sizeof(float), height * width, fp);
+	}
+	fclose(fp);
+	system("rm plate.data");
+	
+	return plate;
 }
