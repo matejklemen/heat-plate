@@ -73,7 +73,18 @@ int main(int argc, char *argv[])
 	
 	// zracunamo stevilo procesov na stranico in zakljucimo odvecne procese
 	int n = floor(sqrt(size));
-	if(id >= n*n)
+	
+	MPI_Group world_group;
+	MPI_Comm_group(MPI_COMM_WORLD, &world_group);
+	
+	MPI_Group new_group;
+	int ranges[3] = {0, n*n - 1, 1};
+	MPI_Group_range_incl(world_group, 1, &ranges, &new_group);
+	
+	MPI_Comm new_world;
+	MPI_Comm_create(MPI_COMM_WORLD, new_group, &new_world);
+	
+	if(new_world == MPI_COMM_NULL)
 	{
 		MPI_Finalize();
 		return 0;
@@ -114,14 +125,52 @@ int main(int argc, char *argv[])
 		swap_pointers(&first_plate, &second_plate);
 		iterations++;
 		
-		MPI_Allreduce(&local_max_diff, &global_max_diff, 1, MPI_FLOAT, MPI_MAX, MPI_COMM_WORLD);
+		MPI_Allreduce(&local_max_diff, &global_max_diff, 1, MPI_FLOAT, MPI_MAX, new_world);
 		
 		if(global_max_diff < epsilon)
 			break;
 		
-		// TO-DO: izmenjaj robove od second plate
+		MPI_Request r;
 		
-		// TO-DO: mogoce barrier? (odvisno kasno bo posiljanje)
+		// posiljanje robov (zgornji, spodnji, lev, desen)
+		if(id / n > 0)
+			MPI_Isend(&second_plate[y_start][x_start], x_end - x_start, MPI_FLOAT, id - n, 0, new_world, &r);
+		if(id / n < n - 1)
+			MPI_Isend(&second_plate[y_end - 1][x_start], x_end - x_start, MPI_FLOAT, id + n, 0, new_world, &r);
+		if(id % n > 0)
+		{
+			float left_col_send[y_end - y_start];
+			for(int i = y_start; i < y_end; i++)
+				left_col_send[i - y_start] = second_plate[i][x_start];
+			MPI_Isend(left_col_send, y_end - y_start, MPI_FLOAT, id - 1, 0, new_world, &r);
+		}
+		if(id % n < n - 1)
+		{
+			float right_col_send[y_end - y_start];
+			for(int i = y_start; i < y_end; i++)
+				right_col_send[i - y_start] = second_plate[i][x_end - 1];
+			MPI_Isend(right_col_send, y_end - y_start, MPI_FLOAT, id + 1, 0, new_world, &r);
+		}
+		
+		// prejemanje robov (zgornji, spodnji, lev, desen)
+		if(id / n > 0)
+			MPI_Recv(&second_plate[y_start - 1][x_start], x_end - x_start, MPI_FLOAT, id - n, MPI_ANY_TAG, new_world, MPI_STATUS_IGNORE);
+		if(id / n < n - 1)
+			MPI_Recv(&second_plate[y_end][x_start], x_end - x_start, MPI_FLOAT, id + n, MPI_ANY_TAG, new_world, MPI_STATUS_IGNORE);
+		if(id % n > 0)
+		{
+			float left_col_recv[y_end - y_start];
+			MPI_Recv(left_col_recv, y_end - y_start, MPI_FLOAT, id - 1, MPI_ANY_TAG, new_world, MPI_STATUS_IGNORE);
+			for(int i = y_start; i < y_end; i++)
+				second_plate[i][x_start - 1] = left_col_recv[i - y_start];
+		}
+		if(id % n < n - 1)
+		{
+			float right_col_recv[y_end - y_start];
+			MPI_Recv(right_col_recv, y_end - y_start, MPI_FLOAT, id + 1, MPI_ANY_TAG, new_world, MPI_STATUS_IGNORE);
+			for(int i = y_start; i < y_end; i++)
+				second_plate[i][x_end] = right_col_recv[i - y_start];
+		}
 	}
 	
 	if(id == 0)
@@ -134,7 +183,7 @@ int main(int argc, char *argv[])
 			y_end = 1 + (int)((double)((p / n) + 1) * (height - 2) / n);
 			for(int i = y_start; i < y_end; i++)
 			{
-				MPI_Recv(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, p, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				MPI_Recv(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, p, i, new_world, MPI_STATUS_IGNORE);
 			}
 		}
 		
@@ -144,16 +193,16 @@ int main(int argc, char *argv[])
 		    fwrite(second_plate[0], sizeof(float), height * width, fp);
 		}
 		fclose(fp);
+		
+		//printf("%d iterations.\n", iterations);
 	}
 	else
 	{
 		for(int i = y_start; i < y_end; i++)
 		{
-			MPI_Send(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, 0, i, MPI_COMM_WORLD);
+			MPI_Send(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, 0, i, new_world);
 		}
 	}
-	
-	MPI_Barrier(MPI_COMM_WORLD);
 	
 	free_plate(first_plate, height, width);
 	free_plate(second_plate, height, width);
