@@ -465,5 +465,62 @@ Za konec pa poglejmo še, kako dobro se je algoritem, paraleliziran na grafični
 \end{center}
 \vspace{-25pt}
 \end{figure}
+\section{Paralelizacija s knjižnico ``OpenMPI''}
+\label{poglavje-mpi}
+\subsection{Ideja paralelizacije}
+
+\pagebreak
+\subsection{Rezultati}
+\subsubsection{Rezultati na lokalnem testnem sistemu}
+
+\begin{table}[H]
+\begin{center}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabljenih procesov z uporabo knjižnice OpenMPI.}
+\label{tabela-rezultati-5}
+\begin{tabularx}{\textwidth}{|YYYY|}
+\hhline{====}
+Število uporabljenih procesov & Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
+\hhline{====}
+\multirow{ 5}{*}{1}
+& 100 & 0,312 & 0,000 \tabularnewline
+& 200 & 1,040 & 0,004 \tabularnewline
+& 400 & 3,961 & 0,013 \tabularnewline
+& 800 & 15,547 & 0,013 \tabularnewline
+& 1600 & 65,138 & 0,104 \tabularnewline
+\hline
+\multirow{ 5}{*}{2}
+& 100 & 0,350 & 0,000 \tabularnewline
+& 200 & 1,153 & 0,003 \tabularnewline
+& 400 & 4,393 & 0,004 \tabularnewline
+& 800 & 17,424 & 0,014 \tabularnewline
+& 1600 & 72,692 & 0,044 \tabularnewline
+\hline
+\multirow{ 5}{*}{3}
+& 100 &  &  \tabularnewline
+& 200 &  &  \tabularnewline
+& 400 &  &  \tabularnewline
+& 800 &  &  \tabularnewline
+& 1600 &  &  \tabularnewline
+\hline
+\multirow{ 5}{*}{4}
+& 100 &  &  \tabularnewline
+& 200 &  &  \tabularnewline
+& 400 &  &  \tabularnewline
+& 800 &  &  \tabularnewline
+& 1600 &  &  \tabularnewline
+\hline
+\multirow{ 5}{*}{8}
+& 100 &  &  \tabularnewline
+& 200 &  &  \tabularnewline
+& 400 &  &  \tabularnewline
+& 800 &  &  \tabularnewline
+& 1600 &  &  \tabularnewline
+\hhline{====}
+\end{tabularx}
+\end{center}
+\vspace{-25pt}
+\end{table}
+
+\subsubsection{Rezultati na omrežju SLING}
 
 \end{document}
