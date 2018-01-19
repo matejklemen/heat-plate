@@ -478,7 +478,7 @@ Za konec pa poglejmo še, kako dobro se je algoritem, paraleliziran na grafični
 
 Paralelni programi pripravljeni s knjižnico OpenMPI se v celoti izvajajo vzporedno (ob zagonu navedemo želeno število procesov). Delitev dela je organizirana na podlagi identifikacijskih številk procesov, na enak način pa lahko po potrebi poskrbimo še za vejitve, če želimo, da eden od procesov deluje kot gospodar.
 
-V našem primeru temperaturne plošče smo se odločili, da procese navidezno razporedimo v mrežo n x n, vsakemu pa se dodeli pripadajoč blok plošče. Takšna delitev dela zahteva, v primerjavi z delitvijo na vodoravne pasove, nekoliko več organizacije pri izmenjevanju robov plošče, vendar se v celoti gledano pošilja manjša količina podatkov. Za ploščo velikosti s x s in p procesov se izkaže, da pri delitvi na pasove izmenjamo 2 * (p - 1) * s točk na iteracijo, z mrežo blokov pa izmenjamo le 4 * (sqrt(p) - 1) * s točk na iteracijo, kar prinese pri večjem številu procesov kar veliko razliko. Po drugi strani nas takšna delitev rahlo omejuje, saj lahko izkoristimo le toliko virov, za kolikor se takšna delitev izide (1, 2, 4, 9, 16...). V programu zato takoj na začetku obdržimo le pow(floor(sqrt(p)), 2) procesov.
+V našem primeru temperaturne plošče smo se odločili, da procese navidezno razporedimo v mrežo \(n \times n\), vsakemu pa se dodeli pripadajoč blok plošče. Takšna delitev dela zahteva, v primerjavi z delitvijo na vodoravne pasove, nekoliko več organizacije pri izmenjevanju robov plošče, vendar se v celoti gledano pošilja manjša količina podatkov. Za ploščo velikosti \(s \times s\) in \(p\) procesov se izkaže, da pri delitvi na pasove izmenjamo \(2 \cdot s \cdot (p-1)\) točk na iteracijo, z mrežo blokov pa izmenjamo le \(4 \cdot s \cdot (\sqrt{p}-1)\) točk na iteracijo, kar prinese pri večjem številu procesov kar veliko razliko. Po drugi strani nas takšna delitev rahlo omejuje, saj lahko izkoristimo le toliko virov, za kolikor se takšna delitev izide (1, 2, 4, 9, 16...). V programu zato takoj na začetku obdržimo le \(\left \lfloor{\sqrt{p}}\right \rfloor ^ 2\) procesov.
 
 Na vsakem od obdržanih procesov se nato pripravita dve celotni plošči, za tem pa se izračunajo še meje, v katerih bo dan proces računal. Taka rešitev je sicer precej pomnilniško potratna (vsak proces ima shranjeno celotno ploščo, potrebuje pa le svoj del), ampak se je v praksi izkazala za boljšo kot npr. inicializacija plošče na enem procesu in pošiljanje delov plošče med ostale ali pa porazdeljena inicializacija delov plošče (naša implementacija inicializacije namreč vsebuje nekaj odvisnosti med sosednjimi točkami, kar prinese potrebo po dodatni komunikaciji med procesi).
 
@@ -486,14 +486,16 @@ V tej točki je vse pripravljeno in začnemo z računanjem. Vsak proces izračun
 
 Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (gospodar), ta pa podatke sprejme, organizira v celoto in nato ploščo shrani kot datoteko. Za tem procesi le še počistijo rezerviran pomnilnik.
 
-\pagebreak
 \subsection{Rezultati}
+
 \subsubsection{Rezultati na lokalnem testnem sistemu}
+
+Program smo lokalno testirali na enakem testnem sistemu kot pri prejšnjih testiranjih (specifikacije so navedene v tabeli \ref{tabela-specifikacije}), rezultati meritev pa so predstavljeni v tabeli \ref{tabela-rezultati-5}.
 
 \begin{table}[H]
 \begin{center}
 \caption{Povprečni čas izvajanja paralelnega programa (na lokalnem testnem sistemu) in standardna napaka glede na velikost stranice in število uporabljenih procesov z uporabo knjižnice OpenMPI.}
-\label{tabela-rezultati-5-lokalni}
+\label{tabela-rezultati-5}
 \begin{tabularx}{\textwidth}{|YYYY|}
 \hhline{====}
 Število uporabljenih procesov & Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
@@ -505,14 +507,14 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 & 800 & 15,547 & 0,013 \tabularnewline
 & 1600 & 65,138 & 0,104 \tabularnewline
 \hline
-\multirow{ 5}{*}{2}
+\multirow{ 5}{*}{2 (1)}
 & 100 & 0,350 & 0,000 \tabularnewline
 & 200 & 1,153 & 0,003 \tabularnewline
 & 400 & 4,393 & 0,004 \tabularnewline
 & 800 & 17,424 & 0,014 \tabularnewline
 & 1600 & 72,692 & 0,044 \tabularnewline
 \hline
-\multirow{ 5}{*}{3}
+\multirow{ 5}{*}{3 (1)}
 & 100 & 0,357 & 0,000 \tabularnewline
 & 200 & 1,162 & 0,003 \tabularnewline
 & 400 & 4,400 & 0,004 \tabularnewline
@@ -526,7 +528,7 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 & 800 & 8,388 & 0,003 \tabularnewline
 & 1600 & 34,598 & 0,012 \tabularnewline
 \hline
-\multirow{ 5}{*}{8}
+\multirow{ 5}{*}{8 (4)}
 & 100 & 0,302 & 0,000 \tabularnewline
 & 200 & 0,723 & 0,000 \tabularnewline
 & 400 & 2,417 & 0,004 \tabularnewline
@@ -538,8 +540,17 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 \vspace{-25pt}
 \end{table}
 
-\pagebreak
+Za lažjo primerjavo, smo meritve časov opravili za popolnoma enak nabor parametrov kot pri testiranju paralelizacij s knjižnicama Pthreads in OpenMP, vendar je tukaj pomembno dejstvo, da se program zaradi posebne delitve dela vedno izvaja le na \(\left \lfloor{\sqrt{p}}\right \rfloor ^ 2\) procesih (p je zahtevano število procesov). V tabeli \ref{tabela-rezultati-5} smo zato poleg zahtevanega števila procesov navedli še število aktivnih procesov za primere, ko se ti dve števili razlikujeta.
+
+Smiselno lahko torej obravnavamo le primere, kjer smo zahtevali 1 in 4 procese. Ti rezultati so zelo podobni rezultatom, ki smo jih pri enakih parametrih dobili s paralelizacijo s knjižnicama Pthreads in OpenMP, kar je bilo tudi pričakovano. Medprocesna komunikacija znotraj enega vozlišča je pri MPI najverjetneje implementirana kar z uporabo deljenega pomnilnika in je zato časovna zakasnitev pri izmenjevanju robov zelo majhna.
+
+Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda primerljivi s časi meritev, pri katerih smo že sami zahtevali toliko procesov, kolikor jih je bilo pri računanju dejansko aktivnih. Nekaj več časa se je očitno porabilo le na račun upravljanja z dodatnimi neaktivnimi procesi.
+
 \subsubsection{Rezultati na omrežju SLING}
+
+TODO: testirali smo na slingu, kaj je sling, meritve so v tabeli in na grafu
+
+TODO: posodobi tabelo
 
 \begin{table}[H]
 \begin{center}
@@ -582,6 +593,14 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 \vspace{-25pt}
 \end{table}
 
-\textbf{Meritve za 64 proc so sumljivo velike in sumljivo skupaj!}
+TODO: dodaj graf časov
+
+TODO: izracunali smo pohitritev, zakaj je slabse za 64 v primerjavi z 25
+
+TODO: graf pohitritev za 800x800
+
+TODO: komentar na ucinkovitost, najbrz bojo prve ucinkovitosti prblizno enake (kr je na enm nodu), pol za 64 pa je tko ko smo rekli ze pr pohitritvi + ena opcija za povecat ucinkovitost je pac vecanje problema
+
+TODO: graf ucinkovitost za 800x800
 
 \end{document}
