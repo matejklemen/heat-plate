@@ -486,14 +486,16 @@ V tej točki je vse pripravljeno in začnemo z računanjem. Vsak proces izračun
 
 Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (gospodar), ta pa podatke sprejme, organizira v celoto in nato ploščo shrani kot datoteko. Za tem procesi le še počistijo rezerviran pomnilnik.
 
-\pagebreak
 \subsection{Rezultati}
+
 \subsubsection{Rezultati na lokalnem testnem sistemu}
+
+Program smo lokalno testirali na enakem testnem sistemu kot pri prejšnjih testiranjih (specifikacije so navedene v tabeli \ref{tabela-specifikacije}), rezultati meritev pa so predstavljeni v tabeli \ref{tabela-rezultati-5}.
 
 \begin{table}[H]
 \begin{center}
 \caption{Povprečni čas izvajanja paralelnega programa (na lokalnem testnem sistemu) in standardna napaka glede na velikost stranice in število uporabljenih procesov z uporabo knjižnice OpenMPI.}
-\label{tabela-rezultati-5-lokalni}
+\label{tabela-rezultati-5}
 \begin{tabularx}{\textwidth}{|YYYY|}
 \hhline{====}
 Število uporabljenih procesov & Velikost stranice [št. točk] & Povprečni čas izvajanja [s] & Standardna napaka [s] \tabularnewline
@@ -505,14 +507,14 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 & 800 & 15,547 & 0,013 \tabularnewline
 & 1600 & 65,138 & 0,104 \tabularnewline
 \hline
-\multirow{ 5}{*}{2}
+\multirow{ 5}{*}{2 (1)}
 & 100 & 0,350 & 0,000 \tabularnewline
 & 200 & 1,153 & 0,003 \tabularnewline
 & 400 & 4,393 & 0,004 \tabularnewline
 & 800 & 17,424 & 0,014 \tabularnewline
 & 1600 & 72,692 & 0,044 \tabularnewline
 \hline
-\multirow{ 5}{*}{3}
+\multirow{ 5}{*}{3 (1)}
 & 100 & 0,357 & 0,000 \tabularnewline
 & 200 & 1,162 & 0,003 \tabularnewline
 & 400 & 4,400 & 0,004 \tabularnewline
@@ -526,7 +528,7 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 & 800 & 8,388 & 0,003 \tabularnewline
 & 1600 & 34,598 & 0,012 \tabularnewline
 \hline
-\multirow{ 5}{*}{8}
+\multirow{ 5}{*}{8 (4)}
 & 100 & 0,302 & 0,000 \tabularnewline
 & 200 & 0,723 & 0,000 \tabularnewline
 & 400 & 2,417 & 0,004 \tabularnewline
@@ -538,7 +540,12 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 \vspace{-25pt}
 \end{table}
 
-\pagebreak
+Za lažjo primerjavo, smo meritve časov opravili za popolnoma enak nabor parametrov kot pri testiranju paralelizacij s knjižnicama Pthreads in OpenMP, vendar je tukaj pomembno dejstvo, da se program zaradi posebne delitve dela vedno izvaja le na pow(floor(sqrt(p)), 2) procesih (p je zahtevano število procesov). V tabeli \ref{tabela-rezultati-5} smo zato poleg zahtevanega števila procesov navedli še število aktivnih procesov za primere, ko se ti dve števili razlikujeta.
+
+Smiselno lahko torej obravnavamo le primere, kjer smo zahtevali 1 in 4 procese. Ti rezultati so zelo podobni rezultatom, ki smo jih pri enakih parametrih dobili s paralelizacijo s knjižnicama Pthreads in OpenMP, kar je bilo tudi pričakovano. Medprocesna komunikacija znotraj enega vozlišča je pri MPI najverjetneje implementirana kar z uporabo deljenega pomnilnika in je zato časovna zakasnitev pri izmenjevanju robov zelo majhna.
+
+Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda primerljivi s časi meritev, pri katerih smo že sami zahtevali toliko procesov, kolikor jih je bilo pri računanju dejansko aktivnih. Nekaj več časa se je očitno porabilo le na račun upravljanja z dodatnimi neaktivnimi procesi.
+
 \subsubsection{Rezultati na omrežju SLING}
 
 \begin{table}[H]
