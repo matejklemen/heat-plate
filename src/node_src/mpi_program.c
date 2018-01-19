@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <math.h>
 
+/*
+	Vse dodatne funkcije (alloc_plate, free_plate, init_plate, calc_heat_point,
+	swap_pointers) so kopirane iz datoteke heat_plate.c zaradi lažjega prevajanja
+	ene same datoteke na slingu.
+*/
+
 float **alloc_plate(int height, int width)
 {
 	float *linear_buff = (float *) malloc(sizeof(float) * height * width);
@@ -106,8 +112,8 @@ int main(int argc, char *argv[])
 	
 	while(1)
 	{
+		// najprej vsak proces izracuna svoj del plosce in zabelezi lokalno maksimalno razliko
 		float local_max_diff = 0.0;
-		float global_max_diff = 0.0;
 		
 		for(int i = y_start; i < y_end; i++)
 		{
@@ -122,21 +128,29 @@ int main(int argc, char *argv[])
 			}
 		}
 		
+		// procesi opravijo skupno redukcijo (ukaz sluzi tudi kot prepreka)
+		float global_max_diff;
+		MPI_Allreduce(&local_max_diff, &global_max_diff, 1, MPI_FLOAT, MPI_MAX, new_world);
+		
+		// zamenjamo plosci in povecamo stevec iteracij
 		swap_pointers(&first_plate, &second_plate);
 		iterations++;
 		
-		MPI_Allreduce(&local_max_diff, &global_max_diff, 1, MPI_FLOAT, MPI_MAX, new_world);
-		
+		// ce je globalna maksimalna razlika dovolj majhna, koncamo z iteracijami
 		if(global_max_diff < epsilon)
 			break;
 		
+		// posiljanje robov (zgornji, spodnji, lev, desen)
 		MPI_Request r;
 		
-		// posiljanje robov (zgornji, spodnji, lev, desen)
 		if(id / n > 0)
+		{
 			MPI_Isend(&second_plate[y_start][x_start], x_end - x_start, MPI_FLOAT, id - n, 0, new_world, &r);
+		}
 		if(id / n < n - 1)
+		{
 			MPI_Isend(&second_plate[y_end - 1][x_start], x_end - x_start, MPI_FLOAT, id + n, 0, new_world, &r);
+		}
 		if(id % n > 0)
 		{
 			float left_col_send[y_end - y_start];
@@ -154,9 +168,13 @@ int main(int argc, char *argv[])
 		
 		// prejemanje robov (zgornji, spodnji, lev, desen)
 		if(id / n > 0)
+		{
 			MPI_Recv(&second_plate[y_start - 1][x_start], x_end - x_start, MPI_FLOAT, id - n, MPI_ANY_TAG, new_world, MPI_STATUS_IGNORE);
+		}
 		if(id / n < n - 1)
+		{
 			MPI_Recv(&second_plate[y_end][x_start], x_end - x_start, MPI_FLOAT, id + n, MPI_ANY_TAG, new_world, MPI_STATUS_IGNORE);
+		}
 		if(id % n > 0)
 		{
 			float left_col_recv[y_end - y_start];
@@ -173,20 +191,25 @@ int main(int argc, char *argv[])
 		}
 	}
 	
+	// glavni proces na koncu prejema posamezne dele plosce od vseh ostalih procesov
 	if(id == 0)
 	{
 		for(int p = 1; p < n*n; p++)
 		{
+			// za vsak proces se izracuna njegove meje racunanja
 			x_start = 1 + (int)((double)(p % n) * (width - 2) / n);
 			x_end = 1 + (int)((double)((p % n) + 1) * (width - 2) / n);
 			y_start = 1 + (int)((double)(p / n) * (height - 2) / n);
 			y_end = 1 + (int)((double)((p / n) + 1) * (height - 2) / n);
+			
+			// podatke prejemamo po vrsticah
 			for(int i = y_start; i < y_end; i++)
 			{
 				MPI_Recv(&second_plate[i][x_start], x_end - x_start, MPI_FLOAT, p, i, new_world, MPI_STATUS_IGNORE);
 			}
 		}
 		
+		// celotno plosco zapisemo v datoteko
 		FILE* fp = fopen("plate.data", "wb");
 		if(fp)
 		{
@@ -196,6 +219,8 @@ int main(int argc, char *argv[])
 		
 		//printf("%d iterations.\n", iterations);
 	}
+	
+	// vsi procesi razen glavnega, posiljajo svoj del glavnemu procesu
 	else
 	{
 		for(int i = y_start; i < y_end; i++)
@@ -204,6 +229,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	
+	// obe plosci lahko v tem trenutku sprostimo
 	free_plate(first_plate, height, width);
 	free_plate(second_plate, height, width);
 	

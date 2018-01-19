@@ -149,6 +149,7 @@ Iz rezultatov je vidno, da je povprečni čas izvajanja kvadratno odvisen od vel
 
 \section{Paralelizacija s knjižnico ``Pthreads''}
 \label{poglavje-pthreads}
+
 \subsection{Ideja paralelizacije} \label{poglavje-ideja-paralelizacije-2}
 
 Do vključno inicializacije plošč poteka vse enako kot v serijskem algoritmu, za tem pa se delo razdeli med \textit{NUM\_THREADS} niti. Vsaka nit v posamezni iteraciji izračuna svoj delež vrstic. Pred računanjem se meje vrstic določijo na podlagi spodnjih enačb (\textit{index} predstavlja zaporedno številko niti iz intervala $\left[0, NUM\_THREADS - 1\right]$, ki jo dobi posamezna nit podano kot argument).
@@ -260,6 +261,7 @@ kjer je $S_N$ faktor pohitritve in $N$ število niti. Učinkovitost je najboljš
 
 \section{Paralelizacija s knjižnico ``OpenMP''}
 \label{poglavje-openmp}
+
 \subsection{Ideja paralelizacije}
 Paralelizacija poteka na podoben način kot paralelizacija s knjižnico Pthreads (za katero je ideja paralelizacije opisana v poglavju \ref{poglavje-ideja-paralelizacije-2}). Na začetku vsake iteracije se delo statično razdeli med vse niti - vsaka nit dobi $\frac{\breve{s}tevilo \ vrstic \ - \ 2}{\breve{s}tevilo \ niti}$ vrstic. Če $\breve{s}tevilo \ vrstic \ - \ 2$ ni deljivo s $\breve{s}tevilo \ niti$ (ostane $0 < r < \breve{s}tevilo \ niti$), potem se prvim $r$ nitim dodeli še po 1 vrstico.
 
@@ -358,6 +360,7 @@ Po enačbi \ref{enacba-ucinkovitost} sva izračunala še učinkovitost v odvisno
 
 \section{Paralelizacija s knjižnico ``OpenCL''}
 \label{poglavje-opencl}
+
 \subsection{Ideja paralelizacije}
 
 Algoritem, pripravljen s knjižnico OpenCL je sestavljen iz dveh delov. En del se izvaja na gostitelju (CPE), drugi pa na napravi, ki je podprta z OpenCL platformo (v našem primeru je to GPE).
@@ -465,9 +468,23 @@ Za konec pa poglejmo še, kako dobro se je algoritem, paraleliziran na grafični
 \end{center}
 \vspace{-25pt}
 \end{figure}
+
+\pagebreak
+
 \section{Paralelizacija s knjižnico ``OpenMPI''}
 \label{poglavje-mpi}
+
 \subsection{Ideja paralelizacije}
+
+Paralelni programi pripravljeni s knjižnico OpenMPI se v celoti izvajajo vzporedno (ob zagonu navedemo želeno število procesov). Delitev dela je organizirana na podlagi identifikacijskih številk procesov, na enak način pa lahko po potrebi poskrbimo še za vejitve, če želimo, da eden od procesov deluje kot gospodar.
+
+V našem primeru temperaturne plošče smo se odločili, da procese navidezno razporedimo v mrežo n x n, vsakemu pa se dodeli pripadajoč blok plošče. Takšna delitev dela zahteva, v primerjavi z delitvijo na vodoravne pasove, nekoliko več organizacije pri izmenjevanju robov plošče, vendar se v celoti gledano pošilja manjša količina podatkov. Za ploščo velikosti s x s in p procesov se izkaže, da pri delitvi na pasove izmenjamo 2 * (p - 1) * s točk na iteracijo, z mrežo blokov pa izmenjamo le 4 * (sqrt(p) - 1) * s točk na iteracijo, kar prinese pri večjem številu procesov kar veliko razliko. Po drugi strani nas takšna delitev rahlo omejuje, saj lahko izkoristimo le toliko virov, za kolikor se takšna delitev izide (1, 2, 4, 9, 16...). V programu zato takoj na začetku obdržimo le pow(floor(sqrt(p)), 2) procesov.
+
+Na vsakem od obdržanih procesov se nato pripravita dve celotni plošči, za tem pa se izračunajo še meje, v katerih bo dan proces računal. Taka rešitev je sicer precej pomnilniško potratna (vsak proces ima shranjeno celotno ploščo, potrebuje pa le svoj del), ampak se je v praksi izkazala za boljšo kot npr. inicializacija plošče na enem procesu in pošiljanje delov plošče med ostale ali pa porazdeljena inicializacija delov plošče (naša implementacija inicializacije namreč vsebuje nekaj odvisnosti med sosednjimi točkami, kar prinese potrebo po dodatni komunikaciji med procesi).
+
+V tej točki je vse pripravljeno in začnemo z računanjem. Vsak proces izračuna svoj del in lokalno največjo naračunano razliko. Za tem se opravi skupna redukcija, kjer kot rezultat vsak proces dobi globalno maksimalno razliko (ko je ta dovolj majhna se zaključi računanje), hkrati pa ta ukaz služi tudi kot prepreka na kateri se procesi časovno sinhronizirajo. Zabeležimo še novo število iteracij in zamenjamo vlogi plošč, za tem pa sledi izmenjevanje robov. Vsak proces najprej neblokirajoče pošlje robove vsem sosedom, nato pa blokirajoče prejema želene podatke. Takoj ko posamezen proces prejme vse podatke, lahko brez prepreke nadaljuje z računanjem naslednje iteracije, po računanju pa se procesi zaradi skupne redukcije spet sinhronizirajo. Proces izmenjevanja robov, bi lahko zaradi velikih stroškov vzpostavljanja komunikacije izboljšali tako, da bi izmenjali širši rob, nato pa bi nekaj iteracij računali brez izmenjave robov (v takem primeru bi sicer imeli nekaj več računanja, ampak je to cenejše od komunikacije).
+
+Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (gospodar), ta pa podatke sprejme, organizira v celoto in nato ploščo shrani kot datoteko. Za tem procesi le še počistijo rezerviran pomnilnik.
 
 \pagebreak
 \subsection{Rezultati}
