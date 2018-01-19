@@ -550,8 +550,6 @@ Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda p
 
 TODO: testirali smo na slingu, kaj je sling, meritve so v tabeli in na grafu
 
-TODO: posodobi tabelo
-
 \begin{table}[H]
 \begin{center}
 \caption{Povprečni čas izvajanja paralelnega programa (na omrežju SLING) in standardna napaka glede na velikost stranice in število uporabljenih procesov z uporabo knjižnice OpenMPI.}
@@ -593,14 +591,37 @@ TODO: posodobi tabelo
 \vspace{-25pt}
 \end{table}
 
-TODO: dodaj graf časov
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-5_1.png}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabljenih procesov pri fiksni meji konvergence $\epsilon = 0.01$ z uporabo knjižnice OpenMPI.}
+\label{graf-rezultati-5}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 TODO: izracunali smo pohitritev, zakaj je slabse za 64 v primerjavi z 25
 
-TODO: graf pohitritev za 800x800
+\textbf{Pohitritve: 3,531 (4 procesi), 6,249 (16 procesov), 7,410 (25 procesov), 0,478 (64 procesov)}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-5_2.png}
+\caption{Faktor pohitritve v odvisnosti od števila uporabljenih procesov za fiksno velikost plošče 800$\times$800 (OpenMPI).}
+\label{graf-rezultati-pohitritev-5}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 TODO: komentar na ucinkovitost, najbrz bojo prve ucinkovitosti prblizno enake (kr je na enm nodu), pol za 64 pa je tko ko smo rekli ze pr pohitritvi + ena opcija za povecat ucinkovitost je pac vecanje problema
 
-TODO: graf ucinkovitost za 800x800
+\textbf{Efektivnosti: 0,883 (4 procesi), 0,391 (16 procesov), 0,296 (25 procesov), 0,007 (64 procesov)}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-5_3.png}
+\caption{Učinkovitost v odvisnosti od števila uporabljenih procesov za fiksno velikost plošče 800$\times$800 (OpenMPI).}
+\label{graf-rezultati-ucinkovitost-5}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 \end{document}
