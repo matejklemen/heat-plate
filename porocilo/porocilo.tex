@@ -606,9 +606,8 @@ Prejšnjo poved dokazuje dejstvo, da se nam pri večjih dimenzijah plošče upor
 \vspace{-25pt}
 \end{figure}
 
-TODO: izracunali smo pohitritev, zakaj je slabse za 64 v primerjavi z 25
+Za ploščo velikosti \(800 \times 800\) smo izračunali faktor pohitritve (enačba \ref{enacba-faktor-pohitritve}) za različna števila procesov. Pohitritev najprej z večanjem števila procesov narašča, nato pa strmo pade, ko prečkamo mejo 32 - toliko je namreč procesorskih jeder na enem od vozlišč v omrežju. Ko mejo prečkamo, pridobimo velik časovni pribitek zaradi visoke latence pri komunikaciji med procesi. To je še lepše prikazano na grafu \ref{graf-rezultati-5}, kjer je vidno, da časovni pribitek ni v veliki meri odvisen od velikosti plošče (od skupne količine podatkov, ki se med računanjem prenaša), ampak je pretežno odvisen od števila zaporednih začetkov prenosa (torej od števila iteracij, ki je v našem primeru približno konstantno za vse velikosti plošče pri fiksnem epsilonu). Vidimo torej, da bi se nam za računanje na omrežju v veliki meri izplačalo implementirati že prej predlagan postopek izmenjevanja nekoliko širšega roba. Tako smo najboljši rezultat dosegli s tem, da smo prenose obdržali na lokalnem nivoju in za 25 procesov dosegli 7,410-kratno pohitritev (25 je namreč največje število, ki ni večje od 32 in ima za koren celo število).
 
-\textbf{Pohitritve: 3,531 (4 procesi), 6,249 (16 procesov), 7,410 (25 procesov), 0,478 (64 procesov)}
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{graf-rezultati-5_2.png}
@@ -618,9 +617,8 @@ TODO: izracunali smo pohitritev, zakaj je slabse za 64 v primerjavi z 25
 \vspace{-25pt}
 \end{figure}
 
-TODO: komentar na ucinkovitost, najbrz bojo prve ucinkovitosti prblizno enake (kr je na enm nodu), pol za 64 pa je tko ko smo rekli ze pr pohitritvi + ena opcija za povecat ucinkovitost je pac vecanje problema
+Prej izračunane faktorje pohitritve smo preračunali še v učinkovitost (enačba \ref{enacba-ucinkovitost}). Največja učinkovitost (0,883) je bila dosežene pri najmanjšem številu pognanih procesov. To, da se učinkovitost z večanjem števila procesov manjša, pa še dodatno opozarja na stroške komunikacije.
 
-\textbf{Efektivnosti: 0,883 (4 procesi), 0,391 (16 procesov), 0,296 (25 procesov), 0,007 (64 procesov)}
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.6]{graf-rezultati-5_3.png}
