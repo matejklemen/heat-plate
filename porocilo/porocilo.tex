@@ -492,6 +492,12 @@ Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (
 
 Program smo lokalno testirali na enakem testnem sistemu kot pri prejšnjih testiranjih (specifikacije so navedene v tabeli \ref{tabela-specifikacije}), rezultati meritev pa so predstavljeni v tabeli \ref{tabela-rezultati-5}.
 
+Za lažjo primerjavo smo meritve časov opravili za popolnoma enak nabor parametrov kot pri testiranju s knjižnicama Pthreads in OpenMP, vendar je tukaj pomembno dejstvo, da se program zaradi posebne delitve dela vedno izvaja le na \(\left \lfloor{\sqrt{p}}\right \rfloor ^ 2\) procesih (p je zahtevano število procesov). V tabeli \ref{tabela-rezultati-5} smo zato poleg zahtevanega števila procesov navedli še število aktivnih procesov za primere, ko se ti dve števili razlikujeta.
+
+Smiselno lahko torej obravnavamo le primere, kjer smo zahtevali 1 in 4 procese. Ti rezultati so zelo podobni rezultatom, ki smo jih pri enakih parametrih dobili s paralelizacijo s knjižnicama Pthreads in OpenMP, kar je bilo tudi pričakovano. Medprocesna komunikacija znotraj enega vozlišča je pri MPI najverjetneje implementirana kar z uporabo deljenega pomnilnika in je zato časovna zakasnitev pri izmenjevanju robov zelo majhna.
+
+Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda primerljivi s časi meritev, pri katerih smo že sami zahtevali toliko procesov, kolikor jih je bilo pri računanju dejansko aktivnih. Nekaj več časa se je očitno porabilo le na račun upravljanja z dodatnimi neaktivnimi procesi.
+
 \begin{table}[H]
 \begin{center}
 \caption{Povprečni čas izvajanja paralelnega programa (na lokalnem testnem sistemu) in standardna napaka glede na velikost stranice in število uporabljenih procesov z uporabo knjižnice OpenMPI.}
@@ -540,16 +546,11 @@ Program smo lokalno testirali na enakem testnem sistemu kot pri prejšnjih testi
 \vspace{-25pt}
 \end{table}
 
-Za lažjo primerjavo smo meritve časov opravili za popolnoma enak nabor parametrov kot pri testiranju s knjižnicama Pthreads in OpenMP, vendar je tukaj pomembno dejstvo, da se program zaradi posebne delitve dela vedno izvaja le na \(\left \lfloor{\sqrt{p}}\right \rfloor ^ 2\) procesih (p je zahtevano število procesov). V tabeli \ref{tabela-rezultati-5} smo zato poleg zahtevanega števila procesov navedli še število aktivnih procesov za primere, ko se ti dve števili razlikujeta.
-
-Smiselno lahko torej obravnavamo le primere, kjer smo zahtevali 1 in 4 procese. Ti rezultati so zelo podobni rezultatom, ki smo jih pri enakih parametrih dobili s paralelizacijo s knjižnicama Pthreads in OpenMP, kar je bilo tudi pričakovano. Medprocesna komunikacija znotraj enega vozlišča je pri MPI najverjetneje implementirana kar z uporabo deljenega pomnilnika in je zato časovna zakasnitev pri izmenjevanju robov zelo majhna.
-
-Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda primerljivi s časi meritev, pri katerih smo že sami zahtevali toliko procesov, kolikor jih je bilo pri računanju dejansko aktivnih. Nekaj več časa se je očitno porabilo le na račun upravljanja z dodatnimi neaktivnimi procesi.
-
+\pagebreak
 \subsubsection{Rezultati na omrežju grid}
 
 Program, paraleliziran s knjižnico OpenMPI, sva testirala tudi na omrežju grid, ki ga upravlja konzorcij SLING (slovenska iniciativa za nacionalni grid). \\
-Ta uporabnikom omogoča preprost dostop do razpršenega omrežja računskih virov za namen paralelnega računanja in obdelave podatkov. Iniciativo vodi Arnes, med člani skupine SLING pa so še organizacije, kot so Institut Jožef Stefan, Agencija republike Slovenije za okolje, Comtrade itd..
+Ta uporabnikom omogoča preprost dostop do razpršenega omrežja računskih virov za namen paralelnega računanja in obdelave podatkov. Iniciativo vodi Arnes, med člani skupine SLING pa so še organizacije, kot so Institut Jožef Stefan, Agencija republike Slovenije za okolje, Comtrade, itd..
 
 Program sva testirala na 4, 16, 25 in 64 jedrih. Več kot s 64 jedri programa nisva testirala predvsem zato, ker se čas čakanja na dodelitev virov na gridu močno poveča, če zahtevamo več virov. Rezultati testiranja so vidni v tabeli \ref{tabela-rezultati-5-sling} in na sliki \ref{graf-rezultati-5}.
 
@@ -610,7 +611,7 @@ Za ploščo velikosti \(800 \times 800\) smo izračunali faktor pohitritve (ena�
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-5_2.png}
+\includegraphics[scale=0.5]{graf-rezultati-5_2.png}
 \caption{Faktor pohitritve v odvisnosti od števila uporabljenih procesov za fiksno velikost plošče 800$\times$800 (OpenMPI).}
 \label{graf-rezultati-pohitritev-5}
 \end{center}
@@ -621,7 +622,7 @@ Prej izračunane faktorje pohitritve smo preračunali (enačba \ref{enacba-ucink
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-5_3.png}
+\includegraphics[scale=0.5]{graf-rezultati-5_3.png}
 \caption{Učinkovitost v odvisnosti od števila uporabljenih procesov za fiksno velikost plošče 800$\times$800 (OpenMPI).}
 \label{graf-rezultati-ucinkovitost-5}
 \end{center}
