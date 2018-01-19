@@ -551,7 +551,10 @@ Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda p
 Program, paraleliziran s knjižnico OpenMPI, sva testirala tudi na omrežju grid, ki ga upravlja konzorcij SLING (slovenska iniciativa za nacionalni grid). \\
 Ta uporabnikom omogoča preprost dostop do razpršenega omrežja računskih virov za namen paralelnega računanja in obdelave podatkov. Iniciativo vodi Arnes, med člani skupine SLING pa so še organizacije, kot so Institut Jožef Stefan, Agencija republike Slovenije za okolje, Comtrade itd..
 
-Program sva testirala na 4, 16, 25 in 64 jedrih. Več kot s 64 jedri programa nisva testirala predvsem zato, ker se čas čakanja na dodelitev virov poveča, če zahtevamo več virov.
+Program sva testirala na 4, 16, 25 in 64 jedrih. Več kot s 64 jedri programa nisva testirala predvsem zato, ker se čas čakanja na dodelitev virov poveča, če zahtevamo več virov. Rezultati testiranja so vidni v tabeli \ref{tabela-rezultati-5-sling} in na sliki \ref{graf-rezultati-5}.
+
+Vidno je, da za majhno velikost plošče večje število procesov doseže slabše rezultate kot manjše število procesov. Razlog je v tem, da z večanjem števila procesov povečujemo čas komunikacije med procesi, količina računanja pa ostaja enaka.
+Prejšnjo poved dokazuje dejstvo, da se nam pri večjih dimenzijah plošče uporaba večjega števila procesov obrestuje (do neke meje) - primer tega je čas izvajanja za velikost plošče $1600 \times 1600$, kjer je čas izvajanja z uporabo 16 in 25 procesov krajši kot tisti z uporabo 4 procesov.
 
 \begin{table}[H]
 \begin{center}
