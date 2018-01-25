@@ -629,4 +629,34 @@ Prej izračunane faktorje pohitritve smo preračunali (enačba \ref{enacba-ucink
 \vspace{-25pt}
 \end{figure}
 
+\section{Pregled uporabljenih metod paralelizacije}
+
+V posameznih poglavjih so bile opisane posamezne metode paralelizacije, to poglavje pa združuje najboljše dosežene rezultate (čase meritev in dosežene pohitritve). Pri primerjavi časov izvajanja so zraven podani še časi za sekvenčni algoritem, da se bolje vidi moč posameznih pristopov k paralelizaciji.
+
+Graf na sliki \ref{graf-rezultati-pregled-6} prikazuje čas izvajanja sekvenčnega algoritma ter najboljše dosežene čase izvajanja s posameznimi pristopi paralelizacije.
+
+Pri majhnih velikostih plošče (konkretno je najmanjša velikost plošče, za katero so bile opravljene meritve, tukaj $100 \times 100$) so si (povprečni) časi izvajanja precej podobni. To je posledica dejstva, da je tukaj relativno malo računanja v primerjavi s potrebno režijo za vzpostavitev paralelizacije. Zato paralelni programi ves tisti čas, ki so ga pridobili na račun paralelnega izvajanja, izgubijo zaradi režije. Poleg tega je povprečni čas izvajanja pri majhnih velikostih plošče že v primeru sekvenčnega algoritma precej kratek (približno 0,250 sekunde), zato izboljšave niso tako očitne. Najkrajši povprečni čas izvajanja doseže paralelizacija s knjižnico OpenCL, 0,111 sekunde.
+
+\textbf{TODO}: 
+\begin{itemize}
+\item ni treba za vsako dimenzijo tok natančno
+\item omenit je treba, da se za večje plošče začne kazat razlika in da OpenCL potolče vse ostale pristope pri čisto vsaki velikosti plošče
+\item mogoče za konec še omeniva, če se potem splača grafične kar za vsako paralelizacijo uporabit? (verjetno ne, so najbrž kakšni problemi, kjer pa grafična ne pride do izraza)
+\item omenit morva, da se je pri večjem številu procesov na gridu čas močno poslabšal in da bi morali (najbrž) zelo povečati problem, da bi se tisto še splačalo
+\item ... še kaj
+\end{itemize}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.7]{graf-rezultati-6-pregled.png}
+\caption{Čas izvajanja sekvenčnega algoritma ter najboljši (najkrajši) doseženi časi izvajanja s posameznimi pristopi paralelizacije.}
+\label{graf-rezultati-pregled-6}
+\end{center}
+\vspace{-25pt}
+\end{figure}
+
+\textbf{TODO}: komentar na pohitritve
+
+\section{Zaključek}
+
 \end{document}
