@@ -637,11 +637,18 @@ Graf na sliki \ref{graf-rezultati-pregled-6} prikazuje čas izvajanja sekvenčne
 
 Pri majhnih velikostih plošče (konkretno je najmanjša velikost plošče, za katero so bile opravljene meritve, tukaj $100 \times 100$) so si (povprečni) časi izvajanja precej podobni. To je posledica dejstva, da je tukaj relativno malo računanja v primerjavi s potrebno režijo za vzpostavitev paralelizacije. Zato paralelni programi ves tisti čas, ki so ga pridobili na račun paralelnega izvajanja, izgubijo zaradi režije. Poleg tega je povprečni čas izvajanja pri majhnih velikostih plošče že v primeru sekvenčnega algoritma precej kratek (približno 0,250 sekunde), zato izboljšave niso tako očitne. Najkrajši povprečni čas izvajanja doseže paralelizacija s knjižnico OpenCL, 0,111 sekunde.
 
+Z večanjem velikosti plošče povprečni čas izvajanja hitro narašča (kvadratno v odvisnosti od velikosti stranice). Tukaj se začnejo kazati prednosti uporabe paralelnih pristopov. Kot primer velja omeniti, da pri velikosti plošče $1600 \times 1600$ sekvenčni algoritem rabi v povprečju 62,272 sekund, paralelni algoritem na grafični kartici (paraleliziran s pomočjo OpenCL) pa zgolj 3,074 sekunde.
+
+Izmed uporabljenih pristopov paralelizacije sta si paralelizacija s knjižnico Pthreads in paralelizacija s knjižnico OpenMP zelo podobni - povprečni časi izvajanja so si zelo blizu, iz tega pa sledi, da so si tudi pohitritve zelo podobne. Majhne razlike so najverjetneje posledica različno učinkovitih implementacij paralelnih konstruktov v posameznih knjižnicah.
+
+Najboljše rezultate je za vse (izbrane) velikosti plošče dosegla paralelizacija na grafični kartici (s knjižnico OpenCL). Na $1600 \times 1600$ je dosegla kar 20,258-kratno pohitritev (glede na sekvenčni algoritem). \\
+Kljub temu pa to ne pomeni, da bo temu vedno tako - kateri pristop bo deloval najbolje je močno odvisno od problema. Problem temperaturne plošče je bil sicer kar zahteven z vidika pomnilniških dostopov, vendar je to dejstvo zasenčila računska intenzivnost problema. Če te računske intenzivnosti (s katero se zakrije pomnilniška intenzivnost) ne bi bilo, bi pristop z OpenCL dosegel veliko slabše rezultate.
+
+
+
 \textbf{TODO}: 
 \begin{itemize}
-\item ni treba za vsako dimenzijo tok natančno
-\item omenit je treba, da se za večje plošče začne kazat razlika in da OpenCL potolče vse ostale pristope pri čisto vsaki velikosti plošče
-\item mogoče za konec še omeniva, če se potem splača grafične kar za vsako paralelizacijo uporabit? (verjetno ne, so najbrž kakšni problemi, kjer pa grafična ne pride do izraza)
+\item komentiraj še malo grid
 \item omenit morva, da se je pri večjem številu procesov na gridu čas močno poslabšal in da bi morali (najbrž) zelo povečati problem, da bi se tisto še splačalo
 \item ... še kaj
 \end{itemize}
