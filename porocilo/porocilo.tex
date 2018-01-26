@@ -478,7 +478,7 @@ Za konec pa poglejmo še, kako dobro se je algoritem, paraleliziran na grafični
 
 Paralelni programi, pripravljeni s knjižnico OpenMPI, se v celoti izvajajo vzporedno (ob zagonu navedemo želeno število procesov). Delitev dela je organizirana na podlagi identifikacijskih številk procesov, na enak način pa lahko po potrebi poskrbimo še za vejitve, če želimo, da eden od procesov deluje kot gospodar.
 
-V našem primeru temperaturne plošče smo se odločili, da procese navidezno razporedimo v mrežo \(n \times n\), vsakemu pa se dodeli pripadajoč blok plošče. Takšna delitev dela zahteva (v primerjavi z delitvijo na vodoravne pasove) nekoliko več organizacije pri izmenjevanju robov plošče, vendar se v celoti gledano pošilja manjša količina podatkov. Za ploščo velikosti \(s \times s\) in \(p\) procesov se izkaže, da pri delitvi na pasove izmenjamo \(2 \cdot s \cdot (p-1)\) točk na iteracijo, z mrežo blokov pa izmenjamo le \(4 \cdot s \cdot (\sqrt{p}-1)\) točk na iteracijo, kar prinese pri večjem številu procesov kar veliko razliko. Po drugi strani nas takšna delitev rahlo omejuje, saj lahko izkoristimo le toliko virov, za kolikor se takšna delitev izide (1, 2, 4, 9, 16...). V programu zato takoj na začetku obdržimo le \(\left \lfloor{\sqrt{p}}\right \rfloor ^ 2\) procesov.
+V našem primeru temperaturne plošče smo se odločili, da procese navidezno razporedimo v mrežo \(\sqrt{p} \: \times \sqrt{p}\), vsakemu pa se dodeli pripadajoč blok plošče. Takšna delitev dela zahteva (v primerjavi z delitvijo na vodoravne pasove) nekoliko več organizacije pri izmenjevanju robov plošče, vendar se v celoti gledano pošilja manjša količina podatkov. Za ploščo velikosti \(s \times s\) in \(p\) procesov se izkaže, da pri delitvi na pasove izmenjamo \(2 \cdot s \cdot (p-1)\) točk na iteracijo, z mrežo blokov pa izmenjamo le \(4 \cdot s \cdot (\sqrt{p}-1)\) točk na iteracijo, kar prinese pri večjem številu procesov kar veliko razliko. Po drugi strani nas takšna delitev rahlo omejuje, saj lahko izkoristimo le toliko virov, za kolikor se takšna delitev izide (1, 2, 4, 9, 16...). V programu zato takoj na začetku obdržimo le \(\left \lfloor{\sqrt{p}}\right \rfloor ^ 2\) procesov.
 
 Na vsakem od obdržanih procesov se nato pripravita dve celotni plošči, za tem pa se izračunajo še meje, v katerih bo dan proces računal. Taka rešitev je sicer precej pomnilniško potratna (vsak proces ima shranjeno celotno ploščo, potrebuje pa le svoj del), ampak se je v praksi izkazala za boljšo kot npr. inicializacija plošče na enem procesu in pošiljanje delov plošče med ostale ali pa porazdeljena inicializacija delov plošče (naša implementacija inicializacije namreč vsebuje nekaj odvisnosti med sosednjimi točkami, kar prinese potrebo po dodatni komunikaciji med procesi).
 
@@ -631,22 +631,37 @@ Prej izračunane faktorje pohitritve smo preračunali (enačba \ref{enacba-ucink
 
 \section{Pregled uporabljenih metod paralelizacije}
 
-V posameznih poglavjih so bile opisane posamezne metode paralelizacije, to poglavje pa združuje najboljše dosežene rezultate (čase meritev in dosežene pohitritve). Pri primerjavi časov izvajanja so zraven podani še časi za sekvenčni algoritem, da se bolje vidi moč posameznih pristopov k paralelizaciji.
+V posameznih poglavjih so bile opisane posamezne metode paralelizacije, to poglavje pa združuje najboljše dosežene rezultate. Graf na sliki \ref{graf-rezultati-pregled-6} prikazuje čas izvajanja sekvenčnega algoritma ter najboljše dosežene čase izvajanja s posameznimi pristopi paralelizacije.
 
-Graf na sliki \ref{graf-rezultati-pregled-6} prikazuje čas izvajanja sekvenčnega algoritma ter najboljše dosežene čase izvajanja s posameznimi pristopi paralelizacije.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.7]{graf-rezultati-6-pregled.png}
+\caption{Čas izvajanja sekvenčnega algoritma ter najboljši (najkrajši) doseženi časi izvajanja s posameznimi pristopi paralelizacije.}
+\label{graf-rezultati-pregled-6}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 Pri majhnih velikostih plošče (konkretno je najmanjša velikost plošče, za katero so bile opravljene meritve, tukaj $100 \times 100$) so si (povprečni) časi izvajanja precej podobni. To je posledica dejstva, da je tukaj relativno malo računanja v primerjavi s potrebno režijo za vzpostavitev paralelizacije. Zato paralelni programi ves tisti čas, ki so ga pridobili na račun paralelnega izvajanja, izgubijo zaradi režije. Poleg tega je povprečni čas izvajanja pri majhnih velikostih plošče že v primeru sekvenčnega algoritma precej kratek (približno 0,250 sekunde), zato izboljšave niso tako očitne. Najkrajši povprečni čas izvajanja doseže paralelizacija s knjižnico OpenCL, 0,111 sekunde.
 
-Z večanjem velikosti plošče povprečni čas izvajanja hitro narašča (kvadratno v odvisnosti od velikosti stranice). Tukaj se začnejo kazati prednosti uporabe paralelnih pristopov. Kot primer velja omeniti, da pri velikosti plošče $1600 \times 1600$ sekvenčni algoritem rabi v povprečju 62,272 sekund, paralelni algoritem na grafični kartici (paraleliziran s pomočjo OpenCL) pa zgolj 3,074 sekunde.
+Z večanjem velikosti plošče povprečni čas izvajanja hitro narašča (kvadratno v odvisnosti od velikosti stranice). Tukaj se začnejo kazati prednosti uporabe paralelnih pristopov. Kot primer velja omeniti, da pri velikosti plošče $1600 \times 1600$ sekvenčni algoritem rabi v povprečju 62,272 sekund, paralelni algoritem na grafični kartici (paraleliziran s pomočjo OpenCL) pa zgolj 3,074 sekunde. Naraščanje faktorja pohitritve z večanjem plošče se še lepše vidi na sliki \ref{graf-rezultati-pohitritve-pregled-6}.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.7]{graf-rezultati-6_1-pregled.png}
+\caption{Faktor pohitritve, dosežen s posameznimi pristopi paralelizacije za različne velikosti plošče.}
+\label{graf-rezultati-pohitritve-pregled-6}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 Izmed uporabljenih pristopov paralelizacije sta si paralelizacija s knjižnico Pthreads in paralelizacija s knjižnico OpenMP zelo podobni - povprečni časi izvajanja so si zelo blizu, iz tega pa sledi, da so si tudi pohitritve zelo podobne. Majhne razlike so najverjetneje posledica različno učinkovitih implementacij paralelnih konstruktov v posameznih knjižnicah.
 
-Najboljše rezultate je za vse (izbrane) velikosti plošče dosegla paralelizacija na grafični kartici (s knjižnico OpenCL). Na $1600 \times 1600$ je dosegla kar 20,258-kratno pohitritev (glede na sekvenčni algoritem). \\
-Kljub temu pa to ne pomeni, da bo temu vedno tako - kateri pristop bo deloval najbolje je močno odvisno od problema. Problem temperaturne plošče je bil sicer kar zahteven z vidika pomnilniških dostopov, vendar je to dejstvo zasenčila računska intenzivnost problema. Če te računske intenzivnosti (s katero se zakrije pomnilniška intenzivnost) ne bi bilo, bi pristop z OpenCL dosegel veliko slabše rezultate.
+Najboljše rezultate je za vse (izbrane) velikosti plošče dosegla paralelizacija na grafični kartici (s knjižnico OpenCL). Na $1600 \times 1600$ je dosegla kar 20,258-kratno pohitritev (glede na sekvenčni algoritem). Kljub temu pa to ne pomeni, da bo temu vedno tako - kateri pristop bo deloval najbolje, je močno odvisno od tipa problema. Problem temperaturne plošče ima visoko stopnjo podatkovnega paralelizma in je zato primeren za paralelizacijo na GPE. Če bi naš problem zahteval številne vejitve programskega toka in manj vzporednega računanja, bi pristop z OpenCL dosegel veliko slabše rezultate.
 
-TODO: Komentar še za MPI in zaradi čudnega rezultata preverimo še raztegljivost...
+Poleg paralelizacije na grafični kartici, smo precej dobre rezultate dosegli tudi na omrežju grid, kjer smo testirali paralelizacijo s knjižnico MPI. Nekoliko nas je presenetilo dejstvo, da je latenco pri komunikaciji na omrežju zelo težko prikriti. Najboljši rezultat smo namreč dosegli, ko smo število procesov omejili tako, da se je algoritem v celoti izvajal na enem vozlišču. V primeru večjega števila vozlišč se je pri vseh časih pojavil pribitek (približno 30 sekund), so si pa ti časi precej podobni za različne velikosti plošče, kar nakazuje, da bi lahko z ekstremnim večanjem problema dosegli dober rezultat tudi na tak način.
 
-...lahko preverimo raztegljivost. Veljati mora naslednja zveza:
+Običajno prav tak pristop (večanje problema) uporabljamo, ko želimo za večje število vzporednih procesov obdržati enako učinkovitost. Veljati mora naslednja zveza:
 \begin{equation} \label{enacba-raztegljivost}
 T_s(n) \geq C \cdot T_{overhead}(n,p),
 \end{equation}
@@ -672,7 +687,7 @@ V enačbi \ref{enacba-raztegljivost} lahko zdaj uporabimo zgornje časovne zahte
 \begin{equation}
 n^2 \geq C \cdot (n \sqrt{p} + p \log{p}).
 \end{equation}
-Iz te lahko izpeljemo pogoj, ki nam pove vsaj kakšna naj bo nova velikost problema, če želimo ob večanju števila paralelnih enot obdržati enako učinkovitost:
+Iz te lahko izpeljemo pogoj, ki nam pove, vsaj kakšna naj bo nova velikost problema, če želimo ob večanju števila paralelnih enot obdržati enako učinkovitost:
 \begin{equation}
 n^2 - c \sqrt{p} \cdot n - C p \log{p} \geq 0,
 \end{equation}
@@ -683,7 +698,7 @@ Izkaže se, da lahko za naše potrebe prvi del pogoja izpustimo, saj nam ta k re
 \begin{equation}
 n \geq f(p) \quad \textrm{za} \quad f(p) = \frac{C \sqrt{p} + \sqrt{C^2 p + 4 C p \log{p}}}{2},
 \end{equation}
-radi pa bi izvedeli še kakšnega razreda bo pomnilniška zahtevnost za posamezno paralelno enoto (v odvisnosti od \(p\)). V našem primeru poznamo odvisnost od velikosti problema:
+radi pa bi izvedeli še kakšnega reda bo pomnilniška zahtevnost za posamezno paralelno enoto (v odvisnosti od \(p\)). V našem primeru poznamo odvisnost od velikosti problema:
 \begin{equation}
 M(n) = O(n^2),
 \end{equation}
@@ -691,27 +706,7 @@ iz te pa sledi:
 \begin{equation}
 M(f(p)) = O(p \log{p}).
 \end{equation}
-To pomeni, da sistem ni popolnoma raztegljiv, saj moramo z večanjem števila procesov (ob želji, da dosežemo enako učinkovitost) toliko povečati velikost problema, da nam narašča tudi pomnilniška zahtevnost na posamezni procesni enoti. Na tem mestu lahko spet omenimo, da je tukaj še nekaj prostora za izboljšave, saj ima v naši implementaciji vsak proces shranjeno celotno ploščo (in ne le svoj del), ampak za praktične potrebe ta izboljšava ni bila potrebna. Tudi iz vidika ratzegljivosti nam izboljšava ne bi prinesla popolne raztegljivosti, saj bi bila v tem primeru pomnilniška zahtevnost v odvisnosti od števila procesnih enot enaka \(M(f(p)) = O(\log{p})\) in ne konstantna, kot bi si želeli.
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.7]{graf-rezultati-6-pregled.png}
-\caption{Čas izvajanja sekvenčnega algoritma ter najboljši (najkrajši) doseženi časi izvajanja s posameznimi pristopi paralelizacije.}
-\label{graf-rezultati-pregled-6}
-\end{center}
-\vspace{-25pt}
-\end{figure}
-
-\textbf{TODO}: komentar na pohitritve, ref na sliko pohitritev
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.7]{graf-rezultati-6_1-pregled.png}
-\caption{Čas izvajanja sekvenčnega algoritma ter najboljši (najkrajši) doseženi časi izvajanja s posameznimi pristopi paralelizacije.}
-\label{graf-rezultati-pohitritve-pregled-6}
-\end{center}
-\vspace{-25pt}
-\end{figure}
+To pomeni, da sistem ni popolnoma raztegljiv, saj moramo z večanjem števila procesov (ob želji, da dosežemo enako učinkovitost) toliko povečati velikost problema, da nam narašča tudi pomnilniška zahtevnost na posamezni procesni enoti. Na tem mestu lahko spet omenimo, da je tukaj še nekaj prostora za izboljšave, saj ima v naši implementaciji vsak proces shranjeno celotno ploščo (in ne le svoj del), ampak za praktične potrebe ta izboljšava ni bila potrebna. Tudi iz vidika raztegljivosti nam izboljšava ne bi prinesla popolne raztegljivosti, saj bi bila v tem primeru pomnilniška zahtevnost v odvisnosti od števila procesnih enot enaka \(M(f(p)) = O(\log{p})\) in ne konstantna, kot bi si želeli.
 
 \section{Zaključek}
 
