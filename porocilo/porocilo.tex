@@ -644,14 +644,54 @@ Izmed uporabljenih pristopov paralelizacije sta si paralelizacija s knjižnico P
 Najboljše rezultate je za vse (izbrane) velikosti plošče dosegla paralelizacija na grafični kartici (s knjižnico OpenCL). Na $1600 \times 1600$ je dosegla kar 20,258-kratno pohitritev (glede na sekvenčni algoritem). \\
 Kljub temu pa to ne pomeni, da bo temu vedno tako - kateri pristop bo deloval najbolje je močno odvisno od problema. Problem temperaturne plošče je bil sicer kar zahteven z vidika pomnilniških dostopov, vendar je to dejstvo zasenčila računska intenzivnost problema. Če te računske intenzivnosti (s katero se zakrije pomnilniška intenzivnost) ne bi bilo, bi pristop z OpenCL dosegel veliko slabše rezultate.
 
+TODO: Komentar še za MPI in zaradi čudnega rezultata preverimo še raztegljivost...
 
-
-\textbf{TODO}: 
-\begin{itemize}
-\item komentiraj še malo grid
-\item omenit morva, da se je pri večjem številu procesov na gridu čas močno poslabšal in da bi morali (najbrž) zelo povečati problem, da bi se tisto še splačalo
-\item ... še kaj
-\end{itemize}
+...lahko preverimo raztegljivost. Veljati mora naslednja zveza:
+\begin{equation} \label{enacba-raztegljivost}
+T_s(n) \geq C \cdot T_{overhead}(n,p),
+\end{equation}
+kjer \(T_s(n)\) predstavlja čas, ki ga za izvajanje potrebuje serijski algoritem (v odvisnosti od velikosti problema), \(T_{overhead}(n,p)\) je skupen odvečni čas, ki ga pridobimo s paralelizacijo (v odvisnosti od velikosti problema in števila paralelnih enot), \(C\) je pa konstanta, ki zajema zahtevo po konstantni učinkovitosti. Zgornje čase lahko bolj jasno zapišemo kot:
+\begin{equation}
+T_s(n) = \sigma(n) + \varphi(n),
+\end{equation}
+\begin{equation}
+T_{overhead}(n,p) = (p-1) \cdot \sigma(n) + p \cdot \kappa(n,p),
+\end{equation}
+kjer je \(\sigma\) čas izvajanja tistega dela algoritma, ki ga ne moremo paralelizirati, \(\varphi\) čas izvajanja dela algoritma, ki ga lahko paraleliziramo in \(\kappa\) dodaten čas, potreben za komunikacijo in sinhronizacijo med paralelnimi procesi. \\
+V našem primeru bomo za velikost problema uporabili kar velikost stranice plošče, število iteracij pa naj bo konstantno. Na ta način lahko iz obravnave izpustimo še del algoritma, kjer se plošča inicializira, razdeli med procese in na koncu spet združi. Delež časa, ki se porabi za to, lahko namreč enostavno približamo k 0 s tem, ko povečamo zahtevano število iteracij (\(\varepsilon \to 0\)). To si lahko privoščimo, saj ob tem nimamo nobenih dodatnih pomnilniških zahtev. Če torej upoštevamo le del algoritma, kjer ponavljajoče računamo temperature, bo veljalo naslednje:
+\begin{equation}
+\sigma(n) = O(0),
+\end{equation}
+\begin{equation}
+\varphi(n) = O(n^2),
+\end{equation}
+\begin{equation}
+\kappa(n,p) = O(\frac{n}{\sqrt{p}} + \log{p}).
+\end{equation}
+V enačbi \ref{enacba-raztegljivost} lahko zdaj uporabimo zgornje časovne zahtevnosti in dobimo naslednjo zvezo:
+\begin{equation}
+n^2 \geq C \cdot (n \sqrt{p} + p \log{p}).
+\end{equation}
+Iz te lahko izpeljemo pogoj, ki nam pove vsaj kakšna naj bo nova velikost problema, če želimo ob večanju števila paralelnih enot obdržati enako učinkovitost:
+\begin{equation}
+n^2 - c \sqrt{p} \cdot n - C p \log{p} \geq 0,
+\end{equation}
+\begin{equation}
+n \leq \frac{C \sqrt{p} - \sqrt{C^2 p + 4 C p \log{p}}}{2} \quad \textrm{ali} \quad n \geq \frac{C \sqrt{p} + \sqrt{C^2 p + 4 C p \log{p}}}{2}.
+\end{equation}
+Izkaže se, da lahko za naše potrebe prvi del pogoja izpustimo, saj nam ta k rešitvi nikoli ne doda takih \(n\)-jev, ki bi bili večji ali enaki 1, zanimajo pa nas le ti. Tako dobimo naslednjo zahtevo:
+\begin{equation}
+n \geq f(p) \quad \textrm{za} \quad f(p) = \frac{C \sqrt{p} + \sqrt{C^2 p + 4 C p \log{p}}}{2},
+\end{equation}
+radi pa bi izvedeli še kakšnega razreda bo pomnilniška zahtevnost za posamezno paralelno enoto (v odvisnosti od \(p\)). V našem primeru poznamo odvisnost od velikosti problema:
+\begin{equation}
+M(n) = O(n^2),
+\end{equation}
+iz te pa sledi:
+\begin{equation}
+M(f(p)) = O(p \log{p}).
+\end{equation}
+To pomeni, da sistem ni popolnoma raztegljiv, saj moramo z večanjem števila procesov (ob želji, da dosežemo enako učinkovitost) toliko povečati velikost problema, da nam narašča tudi pomnilniška zahtevnost na posamezni procesni enoti. Na tem mestu lahko spet omenimo, da je tukaj še nekaj prostora za izboljšave, saj ima v naši implementaciji vsak proces shranjeno celotno ploščo (in ne le svoj del), ampak za praktične potrebe ta izboljšava ni bila potrebna. Tudi iz vidika ratzegljivosti nam izboljšava ne bi prinesla popolne raztegljivosti, saj bi bila v tem primeru pomnilniška zahtevnost v odvisnosti od števila procesnih enot enaka \(M(f(p)) = O(\log{p})\) in ne konstantna, kot bi si želeli.
 
 \begin{figure}[H]
 \begin{center}
