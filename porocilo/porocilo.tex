@@ -27,7 +27,7 @@
 
 \title{Temperaturna plošča}
 \author{Rok Grmek, Matej Klemen}
-\date{3. november 2017}
+\date{26. januar 2018}
 
 \begin{document}
 
@@ -447,7 +447,7 @@ Slika \ref{graf-rezultati-pohitritev-4} prikazuje faktor pohitritve (določen z 
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.55]{graf-rezultati-4_2.png}
+\includegraphics[scale=0.65]{graf-rezultati-4_2.png}
 \caption{Faktor pohitritve pri različnih velikostih delovne skupine ter fiksni velikosti plošče 800$\times$800 (OpenCL).}
 \label{graf-rezultati-pohitritev-4}
 \end{center}
@@ -484,7 +484,7 @@ Na vsakem od obdržanih procesov se nato pripravita dve celotni plošči, za tem
 
 V tej točki je vse pripravljeno in začnemo z računanjem. Vsak proces izračuna svoj del in lokalno največjo izračunano razliko. Za tem se opravi skupna redukcija, kjer kot rezultat vsak proces dobi globalno maksimalno razliko (ko je ta dovolj majhna se zaključi računanje), hkrati pa ta ukaz služi tudi kot prepreka na kateri se procesi časovno sinhronizirajo. Zabeležimo še novo število iteracij in zamenjamo vlogi plošč, za tem pa sledi izmenjevanje robov. Vsak proces najprej neblokirajoče pošlje robove vsem sosedom, nato pa blokirajoče prejema želene podatke. Takoj, ko posamezen proces prejme vse podatke, lahko brez prepreke nadaljuje z računanjem naslednje iteracije, po računanju pa se procesi zaradi skupne redukcije spet sinhronizirajo. Proces izmenjevanja robov, bi lahko zaradi velikih stroškov vzpostavljanja komunikacije izboljšali tako, da bi izmenjali širši rob, nato pa bi nekaj iteracij računali brez izmenjave robov (v takem primeru bi sicer imeli nekaj več računanja, ampak je to cenejše od komunikacije).
 
-Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (gospodar), ta pa podatke sprejme, organizira v celoto in nato ploščo shrani kot datoteko. Za tem procesi le še počistijo rezerviran pomnilnik.
+Ob koncu se izračunane dele plošče pošlje iz posameznih procesov na prvega (gospodar), ta pa podatke sprejme, organizira v celoto in nato ploščo shrani kot datoteko.
 
 \subsection{Rezultati}
 
@@ -547,12 +547,22 @@ Pri ostalih primerih (2, 3 in 8 zahtevainh procesov) so izmerjeni časi seveda p
 \end{table}
 
 \pagebreak
+
 \subsubsection{Rezultati na omrežju grid}
 
 Program, paraleliziran s knjižnico OpenMPI, sva testirala tudi na omrežju grid, ki ga upravlja konzorcij SLING (slovenska iniciativa za nacionalni grid). \\
 Ta uporabnikom omogoča preprost dostop do razpršenega omrežja računskih virov za namen paralelnega računanja in obdelave podatkov. Iniciativo vodi Arnes, med člani skupine SLING pa so še organizacije, kot so Institut Jožef Stefan, Agencija republike Slovenije za okolje, Comtrade, itd..
 
 Program sva testirala na 4, 16, 25 in 64 jedrih. Več kot s 64 jedri programa nisva testirala predvsem zato, ker se čas čakanja na dodelitev virov na gridu močno poveča, če zahtevamo več virov. Rezultati testiranja so vidni v tabeli \ref{tabela-rezultati-5-sling} in na sliki \ref{graf-rezultati-5}.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.6]{graf-rezultati-5_1.png}
+\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabljenih procesov pri fiksni meji konvergence $\epsilon = 0.01$ z uporabo knjižnice OpenMPI.}
+\label{graf-rezultati-5}
+\end{center}
+\vspace{-25pt}
+\end{figure}
 
 Vidno je, da za majhno velikost plošče večje število procesov doseže slabše rezultate kot manjše število procesov. Razlog je v tem, da z večanjem števila procesov povečujemo čas komunikacije med procesi, količina računanja pa ostaja enaka.
 Prejšnjo poved dokazuje dejstvo, da se nam pri večjih dimenzijah plošče uporaba večjega števila procesov obrestuje (do neke meje) - primer tega je čas izvajanja za velikost plošče $1600 \times 1600$, kjer je čas izvajanja z uporabo 16 in 25 procesov krajši kot tisti z uporabo 4 procesov.
@@ -595,23 +605,14 @@ Prejšnjo poved dokazuje dejstvo, da se nam pri večjih dimenzijah plošče upor
 \hhline{====}
 \end{tabularx}
 \end{center}
-\vspace{-25pt}
+\vspace{-10pt}
 \end{table}
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.6]{graf-rezultati-5_1.png}
-\caption{Povprečni čas izvajanja paralelnega programa in standardna napaka glede na velikost stranice in število uporabljenih procesov pri fiksni meji konvergence $\epsilon = 0.01$ z uporabo knjižnice OpenMPI.}
-\label{graf-rezultati-5}
-\end{center}
-\vspace{-25pt}
-\end{figure}
 
 Za ploščo velikosti \(800 \times 800\) smo izračunali faktor pohitritve (enačba \ref{enacba-faktor-pohitritve}) za različna števila procesov (vidno na grafu \ref{graf-rezultati-pohitritev-5}). Pohitritev najprej z večanjem števila procesov narašča, nato pa strmo pade, ko prečkamo mejo 32 - toliko je namreč procesorskih jeder na enem od vozlišč v omrežju. Ko mejo prečkamo, pridobimo velik časovni pribitek zaradi visoke latence pri komunikaciji med procesi. To je še lepše prikazano na grafu \ref{graf-rezultati-5}, kjer je vidno, da časovni pribitek ni v veliki meri odvisen od velikosti plošče (od skupne količine podatkov, ki se med računanjem prenaša), ampak je pretežno odvisen od števila zaporednih začetkov prenosa (torej od števila iteracij, ki je v našem primeru približno konstantno za vse velikosti plošče pri fiksnem epsilonu). Vidimo torej, da bi se nam za računanje na omrežju v veliki meri izplačalo implementirati že prej predlagan postopek izmenjevanja nekoliko širšega roba. Tako smo najboljši rezultat dosegli s tem, da smo prenose obdržali na lokalnem nivoju in za 25 procesov dosegli 7,410-kratno pohitritev (25 je namreč največje število, ki ni večje od 32 in ima za koren celo število).
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.5]{graf-rezultati-5_2.png}
+\includegraphics[scale=0.53]{graf-rezultati-5_2.png}
 \caption{Faktor pohitritve v odvisnosti od števila uporabljenih procesov za fiksno velikost plošče 800$\times$800 (OpenMPI).}
 \label{graf-rezultati-pohitritev-5}
 \end{center}
@@ -622,20 +623,22 @@ Prej izračunane faktorje pohitritve smo preračunali (enačba \ref{enacba-ucink
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.5]{graf-rezultati-5_3.png}
+\includegraphics[scale=0.53]{graf-rezultati-5_3.png}
 \caption{Učinkovitost v odvisnosti od števila uporabljenih procesov za fiksno velikost plošče 800$\times$800 (OpenMPI).}
 \label{graf-rezultati-ucinkovitost-5}
 \end{center}
 \vspace{-25pt}
 \end{figure}
 
+\pagebreak
+
 \section{Pregled uporabljenih metod paralelizacije}
 
-V posameznih poglavjih so bile opisane posamezne metode paralelizacije, to poglavje pa združuje najboljše dosežene rezultate. Graf na sliki \ref{graf-rezultati-pregled-6} prikazuje čas izvajanja sekvenčnega algoritma ter najboljše dosežene čase izvajanja s posameznimi pristopi paralelizacije.
+V prejšnjih poglavjih so bile opisane posamezne metode paralelizacije, to poglavje pa združuje najboljše dosežene rezultate. Graf na sliki \ref{graf-rezultati-pregled-6} prikazuje čas izvajanja sekvenčnega algoritma ter najboljše dosežene čase izvajanja s posameznimi pristopi paralelizacije.
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.7]{graf-rezultati-6-pregled.png}
+\includegraphics[scale=0.65]{graf-rezultati-6-pregled.png}
 \caption{Čas izvajanja sekvenčnega algoritma ter najboljši (najkrajši) doseženi časi izvajanja s posameznimi pristopi paralelizacije.}
 \label{graf-rezultati-pregled-6}
 \end{center}
@@ -648,7 +651,7 @@ Z večanjem velikosti plošče povprečni čas izvajanja hitro narašča (kvadra
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.7]{graf-rezultati-6_1-pregled.png}
+\includegraphics[scale=0.65]{graf-rezultati-6_1-pregled.png}
 \caption{Faktor pohitritve, dosežen s posameznimi pristopi paralelizacije za različne velikosti plošče.}
 \label{graf-rezultati-pohitritve-pregled-6}
 \end{center}
